@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
+             xmlns:template="clr-namespace:NextChatGPTForMAUI.Views.Templates"
+             xmlns:converters ="clr-namespace:NextChatGPTForMAUI.Converters"
+             x:Class="NextChatGPTForMAUI.Views.ChatPage"
+             x:DataType="viewmodel:ChatPageViewModel"
+             Title="对话"
+             Shell.NavBarIsVisible="True"
+             Shell.FlyoutBehavior="Flyout"
+             x:Name="ThisChat">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ControlsConverter x:Key="ControlsConverter"/>
+            <Style x:Key="MainGridColor" TargetType="Grid">
+                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource Key=MainLightBackground},Dark={StaticResource Key=MainDarkBackground}}"/>
+            </Style>
+            <Style x:Key="ChatBorderColor" TargetType="Border">
+                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource Key=ChatBorderLightBackground},Dark={StaticResource Key=ChatBordeDarkBackground}}"/>
+                <Setter Property="StrokeThickness" Value="{AppThemeBinding Light=1,Dark=0}"/>
+            </Style>
+            <Style x:Key="InputBorderColor" TargetType="Border">
+                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource Key=InputBorderLightBackground},Dark={StaticResource Key=InputBorderDarkBackground}}"/>
+                <Setter Property="StrokeThickness" Value="{AppThemeBinding Light=1,Dark=0}"/>
+            </Style>
+            <Style x:Key="InputTextColor" TargetType="Editor">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Key=LightSendEditorTextColor},Dark={StaticResource Key=DarkSendEditorColor}}"/>
+            </Style>
+            <Style x:Key="RespondBorderStrokeThickness" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="{AppThemeBinding Light=1,Dark=0}"/>
+            </Style>
+            <DataTemplate x:Key="UserChatTemplate">
+                <template:UserChatTemplate/>
+            </DataTemplate>
+            <DataTemplate x:Key="AiChatTemplate">
+                <template:AiChatTemplate/>
+            </DataTemplate>
+            <template:ChatTemplateSelector 
+                x:Key="ChatTemplateSelector" 
+                UserChatTemplate="{StaticResource UserChatTemplate}"
+                AiChatTemplate="{StaticResource AiChatTemplate}"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid
+        Style="{StaticResource MainGridColor}"
+        Padding="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border
+            Style="{StaticResource Key=ChatBorderColor}"
+            Grid.Row="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10"/>
+            </Border.StrokeShape>
+            <!--以下是聊天生成内容-->
+            <CollectionView
+                ItemsUpdatingScrollMode="KeepLastItemInView"
+                ItemsSource="{Binding ChatList}"
+                ItemTemplate="{StaticResource ChatTemplateSelector}">
+            </CollectionView>
+        </Border>
+        <Grid
+            Grid.Row="1"
+            Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Margin="0,0,5,0"
+                BackgroundColor="#d2691e"
+                VerticalOptions="End"
+                FontFamily="iconfont"
+                FontSize="20"
+                Text="&#xeb86;"
+                TextColor="White"/>
+            <!--聊天输入框Border-->
+            <Border
+                x:Name="InputBorder"
+                Grid.Column="1"
+                Margin="0,0,5,0"
+                Padding="3,-1,3,-1"
+                VerticalOptions="End"
+                Style="{StaticResource InputBorderColor}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <Editor
+                    x:Name="EditorControl"
+                    AutoSize="TextChanges"
+                    VerticalOptions="Center"
+                    Placeholder="在这里输入你的问题..."
+                    Text="{Binding UserText}"
+                    Style="{StaticResource SendTextCol  or}"/>
+            </Border>
+            <Button
+                Grid.Column="2"
+                Margin="0,0,5,0"
+                BackgroundColor="Purple"
+                VerticalOptions="End"
+                FontFamily="iconfont"
+                FontSize="20"
+                Command="{Binding ModifyChatMagiskCommand}"
+                CommandParameter="{x:Reference ThisChat}"
+                Text="&#xe61d;"
+                TextColor="White"/>
+            <Button
+                x:Name="SendButton"
+                Grid.Column="3"
+                BackgroundColor="#009000"
+                Text="发送"
+                FontAttributes="Bold"
+                Command="{Binding SendCommand}"
+                TextColor="White"
+                VerticalOptions="End"/>
+        </Grid>
+    </Grid>
+</ContentPage>

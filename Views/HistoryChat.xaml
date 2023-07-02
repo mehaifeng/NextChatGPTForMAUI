@@ -5,13 +5,9 @@
     xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Class="NextChatGPTForMAUI.Views.HistoryChat"
     Title="历史对话"
+    BackgroundColor="{AppThemeBinding Light={StaticResource MainLightBackground},Dark={StaticResource MainDarkBackground}}"
     Shell.NavBarIsVisible="True"
     Shell.FlyoutBehavior="Flyout">
-    <ContentPage.Resources>
-        <Style TargetType="CollectionView" x:Key="ItemBackColor">
-            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource LightHistoryItemBack},Dark={StaticResource DarkHistoryItemBack}}"/>
-        </Style>
-    </ContentPage.Resources>
     <ScrollView>
         <CollectionView>
             <CollectionView.ItemTemplate>
@@ -29,7 +25,7 @@
                         <Border
                             StrokeShape="{RoundRectangle CornerRadius=15}"
                             StrokeThickness="0"
-                            Style="{StaticResource ItemBackColor}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightHistoryItemBack},Dark={StaticResource DarkHistoryItemBack}}"
                             InputTransparent="False" 
                             Padding="10"
                             HeightRequest="50">

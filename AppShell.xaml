@@ -4,9 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:view="clr-namespace:NextChatGPTForMAUI.Views"
-    Shell.FlyoutBehavior="Disabled"
     FlyoutWidth="230"
-    FlyoutBackdrop="transparent"
     FlyoutBackground="{AppThemeBinding Light={StaticResource FlyoutMenuLightBackground},Dark={StaticResource FlyoutMenuDarkBackground}}">
     <Shell.ItemTemplate>
         <DataTemplate>
@@ -42,25 +40,21 @@
     </Shell.ItemTemplate>
     <FlyoutItem
         Title="对话"
-        Route="NextChatGPTForMAUI.Views.ChatPage"
         Icon="&#xe8e8;">
         <ShellContent ContentTemplate="{DataTemplate view:ChatPage}"/>
     </FlyoutItem>
     <FlyoutItem
         Title="历史对话"
-        Route="NextChatGPTForMAUI.Views.HistoryChat"
         Icon="&#xe640;">
         <ShellContent ContentTemplate="{DataTemplate view:HistoryChat}"/>
     </FlyoutItem>
     <FlyoutItem
         Title="参数控制"
-        Route="NextChatGPTForMAUI.Views.ParameterConfig"
         Icon="&#xe625;">
         <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}"/>
     </FlyoutItem>
     <FlyoutItem
         Title="关于"
-        Route="NextChatGPTForMAUI.Views.AboutPage"
         Icon="&#xe7a6;">
         <ShellContent ContentTemplate="{DataTemplate view:AboutView}"/>
     </FlyoutItem>

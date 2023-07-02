@@ -5,7 +5,8 @@
     xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Class="NextChatGPTForMAUI.Views.DetailChatPage"
     Shell.NavBarIsVisible="True"
-    Shell.FlyoutBehavior="Flyout">
+    Shell.FlyoutBehavior="Flyout"
+    BackgroundColor="{AppThemeBinding Light={StaticResource MainLightBackground},Dark={StaticResource MainDarkBackground}}">
     <ScrollView>
         <Editor
             Background="Transparent"/>

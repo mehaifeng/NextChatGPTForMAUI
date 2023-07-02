@@ -5,8 +5,10 @@
     x:Class="NextChatGPTForMAUI.Views.AboutView"
     Title="关于"
     Shell.NavBarIsVisible="True"
-    Shell.FlyoutBehavior="Flyout">
+    Shell.FlyoutBehavior="Flyout"
+    BackgroundColor="{AppThemeBinding Light={StaticResource MainLightBackground},Dark={StaticResource MainDarkBackground}}">
     <Border
+        BackgroundColor="Transparent"
         StrokeThickness="0">
         <Label 
             Text="•﹏•"

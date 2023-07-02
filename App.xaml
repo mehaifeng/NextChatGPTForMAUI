@@ -19,6 +19,20 @@
             <Color x:Key="MainDarkBackground">Gray</Color>
             <Color x:Key="ChatBordeDarkBackground">#36454f</Color>
             <Color x:Key="InputBorderDarkBackground">#36454f</Color>
+            <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
+            <!--UserChatTemplate色彩-->
+            <Color x:Key="UserChatBoxBackground">#7cfc00</Color>
+            <Color x:Key="UserChatBoxTextColor">Black</Color>
+            <!--AiChatTemplate明亮模式色彩-->
+            <Color x:Key="AiChatBoxLightBackground">White</Color>
+            <Color x:Key="AiChatBoxLightTextColor">Black</Color>
+            <!--AiChatTemplate黑暗模式色彩-->
+            <Color x:Key="AiChatBoxDarkBackground">#26619c</Color>
+            <Color x:Key="AiChatBoxDarkTextColor">White</Color>
+            <!--Label明亮模式色彩-->
+            <Color x:Key="TextLightColor">Gray</Color>
+            <!--Label黑暗模式色彩-->
+            <Color x:Key="TextDarkColor">LightGray</Color>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

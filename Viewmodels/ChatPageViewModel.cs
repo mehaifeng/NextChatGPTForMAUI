@@ -10,8 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenAI_API.Models;
-using NextChatGPTForMAUI.Views.Popups;
-using CommunityToolkit.Maui.Views;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
@@ -45,11 +43,6 @@ namespace NextChatGPTForMAUI.Viewmodels
             chat.AppendUserInput(new string(UserText));
             UserText = string.Empty;
             WillShowResultFromAPI();
-        }
-        [RelayCommand]
-        public void ModifyChatMagisk(ContentPage o)
-        {
-
         }
         /// <summary>
         /// 显示回复

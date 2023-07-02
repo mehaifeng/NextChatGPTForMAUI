@@ -8,15 +8,15 @@
     <Border
         HorizontalOptions="End"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Margin="10,10,10,10"
+        Margin="10,10,10,0"
         Padding="10,0,10,0"
-        BackgroundColor="{AppThemeBinding Light={StaticResource LightSendBoxColor}, Dark={StaticResource DarkSendBoxColor}}">
+        BackgroundColor="{StaticResource UserChatBoxBackground}">
         <Editor
             AutoSize="TextChanges"
             HorizontalOptions="Center"
             VerticalOptions="Center"
             IsReadOnly="True"
-            TextColor="{AppThemeBinding Light={StaticResource LightSendBoxTextColor},Dark={StaticResource DarkSendBoxTextColor}}"
+            TextColor="{StaticResource UserChatBoxTextColor}"
             Text="{Binding Text, Mode=TwoWay}"/>
     </Border>
 </Grid>

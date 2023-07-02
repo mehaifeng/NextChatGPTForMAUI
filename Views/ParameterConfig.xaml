@@ -11,8 +11,12 @@
     BackgroundColor="{AppThemeBinding Light={StaticResource MainLightBackground},Dark={StaticResource MainDarkBackground}}">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <Style x:Key="EntryBackground" TargetType="Entry">
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource InputBorderLightBackground},Dark={StaticResource InputBorderDarkBackground}}"/>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor},Dark={StaticResource TextDarkColor}}"/>
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor},Dark={StaticResource TextDarkColor}}"/>
+                <Setter Property="PlaceholderColor" Value="{StaticResource TextLightColor}"/>
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -23,8 +27,7 @@
                 Margin="0,10,0,20">
                 <Label
                     HorizontalOptions="CenterAndExpand"
-                    Text="API详细信息请参阅">
-                </Label>
+                    Text="API详细信息请参阅"/>
                 <Label
                     TextColor="Blue"
                     Text="此文档"
@@ -61,19 +64,19 @@
                                 <Entry
                                     HorizontalTextAlignment="Center"
                                     WidthRequest="100"
-                                    Style="{StaticResource EntryBackground}"/>
+                                    BackgroundColor="#dcdcdc"/>
                             </Border>
                         </VerticalStackLayout>
                         <Label
                             Margin="10,0,0,0"
                             Grid.Column="1"
                             VerticalOptions="Start"
-                            Text="语言模型"/>
+                            Text="【模型】指定要使用的模型的名称。不同的模型有不同的参数量、性能和价格"/>
                     </Grid>
                     <Grid
                         WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
                         HeightRequest="80"
-                        Margin="0,20,0,0"
+                        Margin="0,20,0,10"
                         x:Name="LayoutTwo">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="120"/>
@@ -84,7 +87,7 @@
                             <Label 
                                 Text="temperature"/>
                             <Border
-                                StrokeThickness="1"
+                                StrokeThickness="0"
                                 HorizontalOptions="Start"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
@@ -95,18 +98,19 @@
                                     HorizontalTextAlignment="Center"
                                     Placeholder="0-1"
                                     WidthRequest="100"
-                                    Style="{StaticResource EntryBackground}"/>
+                                    BackgroundColor="#dcdcdc"/>
                             </Border>
                         </VerticalStackLayout>
                         <Label
                             Margin="10,0,0,0"
                             Grid.Column="1"
                             VerticalOptions="Start"
-                            Text="值越高创造性越高"/>
+                            Text="【温度】控制模型生成文本的随机性。值越高，模型越倾向于生成不确定的、新颖的、多样的文本，越低则倾向于生成确定的、常见的、单一的文本"/>
                     </Grid>
                     <Grid
                         WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
                         HeightRequest="80"
+                        Margin="0,0,0,10"
                         x:Name="LayoutThree">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="120"/>
@@ -117,7 +121,7 @@
                             <Label 
                                 Text="top_p"/>
                             <Border
-                                StrokeThickness="1"
+                                StrokeThickness="0"
                                 HorizontalOptions="Start"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
@@ -128,18 +132,19 @@
                                     HorizontalTextAlignment="Center"
                                     Placeholder="0-1"
                                     WidthRequest="100"
-                                    Style="{StaticResource EntryBackground}"/>
+                                    BackgroundColor="#dcdcdc"/>
                             </Border>
                         </VerticalStackLayout>
                         <Label
                             Margin="10,0,0,0"
                             Grid.Column="1"
                             VerticalOptions="Start"
-                            Text="考虑前百分比概率质量的结果，用于调整输出内容的质量"/>
+                            Text="【截断概率】控制模型在生成下一个单词时考虑的候选单词集合的大小。值越高，模型考虑的候选单词越多，生成文本的多样性越高，反之考虑的候选单词越少，生成文本的多样性越低"/>
                     </Grid>
                     <Grid
                         WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
                         HeightRequest="80"
+                        Margin="0,0,0,10"
                         x:Name="LayoutFour">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="120"/>
@@ -150,7 +155,7 @@
                             <Label 
                                 Text="frequency_penalty"/>
                             <Border
-                                StrokeThickness="1"
+                                StrokeThickness="0"
                                 HorizontalOptions="Start"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
@@ -161,18 +166,19 @@
                                     HorizontalTextAlignment="Center"
                                     Placeholder="-2.0-2.0"
                                     WidthRequest="100"
-                                    Style="{StaticResource EntryBackground}"/>
+                                    BackgroundColor="#dcdcdc"/>
                             </Border>
                         </VerticalStackLayout>
                         <Label
                             Margin="10,0,0,0"
                             Grid.Column="1"
                             VerticalOptions="Start"
-                            Text="正值会根据新标记到目前为止在文本中的现有频率来惩罚新标记，从而降低模型逐字重复同一行的可能性"/>
+                            Text="【频率惩罚】控制模型在生成文本时避免重复单词或短语的程度。值越高，模型越倾向于生成不重复的文本，反之越倾向于生成重复的文本。"/>
                     </Grid>
                     <Grid
                         WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
                         HeightRequest="80"
+                        Margin="0,0,0,10"
                         x:Name="LayoutFive">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="120"/>
@@ -183,7 +189,7 @@
                             <Label 
                                 Text="presence_penalty"/>
                             <Border
-                                StrokeThickness="1"
+                                StrokeThickness="0"
                                 HorizontalOptions="Start"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
@@ -194,18 +200,18 @@
                                     HorizontalTextAlignment="Center"
                                     Placeholder="-2.0-2.0"
                                     WidthRequest="100"
-                                    Style="{StaticResource EntryBackground}"/>
+                                    BackgroundColor="#dcdcdc"/>
                             </Border>
                         </VerticalStackLayout>
                         <Label
                             Margin="10,0,0,0"
                             Grid.Column="1"
                             VerticalOptions="Start"
-                            Text="正值会根据新标记到目前为止是否出现在文本中来惩罚它们，从而增加模型讨论新主题的可能性"/>
+                            Text="【存在惩罚】控制模型在生成文本时避免使用已经出现过的单词或短语的程度。值越高，模型越倾向于生成不重复的文本，反之模型越倾向于生成重复的文本"/>
                     </Grid>
                     <Grid
                         WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
-                        HeightRequest="50"
+                        HeightRequest="60"
                         x:Name="LayoutSix">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="120"/>
@@ -216,32 +222,32 @@
                             <Label 
                                 Text="max_tokens"/>
                             <Border
-                                StrokeThickness="1"
+                                StrokeThickness="0"
                                 HorizontalOptions="Start"
-                                WidthRequest="100">
+                                WidthRequest="100"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource InputBorderLightBackground},Dark={StaticResource InputBorderDarkBackground}}">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
                                     Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
-                                    Placeholder="0-1"
                                     WidthRequest="100"
-                                    Style="{StaticResource EntryBackground}"/>
+                                    BackgroundColor="#dcdcdc"/>
                             </Border>
                         </VerticalStackLayout>
                         <Label
                             Margin="10,0,0,0"
                             Grid.Column="1"
                             VerticalOptions="Start"
-                            Text="单次完成消耗的最大令牌数。"/>
+                            Text="【最大令牌数】指定模型生成文本的最大令牌数。 max_tokens越大，模型生成的文本越长，反之生成的文本越短"/>
                     </Grid>
                     <Label
                         Margin="0,40,0,10"
                         HorizontalOptions="Center"
                         Text="API_Key"/>
                     <Border
-                        StrokeThickness="1"
+                        StrokeThickness="0"
                         HorizontalOptions="Center"
                         WidthRequest="400">
                         <Border.StrokeShape>
@@ -250,14 +256,15 @@
                         <Entry
                             HorizontalTextAlignment="Center"
                             WidthRequest="400"
-                            Style="{StaticResource EntryBackground}"/>
+                            BackgroundColor="#dcdcdc"/>
                     </Border>
                     <Button
                         Text="保存"
+                        TextColor="White"
                         Margin="0,40,0,0"
                         WidthRequest="100"/>
                 </VerticalStackLayout>
             </Grid>
-    </StackLayout>
+        </StackLayout>
     </ScrollView>
 </ContentPage>

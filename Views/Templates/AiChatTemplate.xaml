@@ -11,12 +11,13 @@
         StrokeShape="RoundRectangle 10,10,10,10"
         Margin="10,10,10,10"
         Padding="10,0,10,0"
-        BackgroundColor="{AppThemeBinding Light={StaticResource LightRespondBoxColor}, Dark={StaticResource DarkRespondBoxColor}}">
+        BackgroundColor="{AppThemeBinding Light={StaticResource AiChatBoxLightBackground}, Dark={StaticResource AiChatBoxDarkBackground}}">
         <Editor
             AutoSize="TextChanges"
             HorizontalOptions="Center"
             VerticalOptions="Center"
             IsReadOnly="True"
-            Text="{Binding Text}"/>
+            Text="{Binding Text}"
+            TextColor="{AppThemeBinding Light={StaticResource AiChatBoxLightTextColor}, Dark={StaticResource AiChatBoxDarkTextColor}}"/>
     </Border>
 </Grid>

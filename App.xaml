@@ -19,6 +19,13 @@
             <Color x:Key="MainDarkBackground">Gray</Color>
             <Color x:Key="ChatBordeDarkBackground">#36454f</Color>
             <Color x:Key="InputBorderDarkBackground">#36454f</Color>
+            <!--ParameterConfig明亮模式色彩-->
+            <Color x:Key="ParaMainLightBackground">#ffffff</Color>
+            <Color x:Key="ParaEntryLightBackground">#ffffff</Color>
+            <Color x:Key="ParaEntryStrokeness">Black</Color>
+            <!--ParameterConfig黑暗模式色彩-->
+            <Color x:Key="ParaMainDarkBackground">#36454f</Color>
+            <Color x:Key="ParaEntryDarkBackground">#26619c</Color>
             <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
             <!--UserChatTemplate色彩-->
             <Color x:Key="UserChatBoxBackground">#7cfc00</Color>

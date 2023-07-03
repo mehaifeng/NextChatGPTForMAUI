@@ -8,13 +8,14 @@
     Title="参数控制"
     Shell.NavBarIsVisible="True"
     Shell.FlyoutBehavior="Flyout"
-    BackgroundColor="{AppThemeBinding Light={StaticResource MainLightBackground},Dark={StaticResource MainDarkBackground}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource ParaMainLightBackground},Dark={StaticResource ParaMainDarkBackground}}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="Label">
                 <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor},Dark={StaticResource TextDarkColor}}"/>
             </Style>
             <Style TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource ParaEntryLightBackground}, Dark={StaticResource ParaEntryDarkBackground}}"/>
                 <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor},Dark={StaticResource TextDarkColor}}"/>
                 <Setter Property="PlaceholderColor" Value="{StaticResource TextLightColor}"/>
             </Style>
@@ -260,6 +261,7 @@
                     </Border>
                     <Button
                         Text="保存"
+                        Background="Green"
                         TextColor="White"
                         Margin="0,40,0,0"
                         WidthRequest="100"/>

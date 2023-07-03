@@ -15,8 +15,9 @@ namespace NextChatGPTForMAUI.Viewmodels
 {
     public partial class ChatPageViewModel:ObservableObject
     {
-        OpenAIAPI Api;
-        Conversation chat;
+        private OpenAIAPI Api;
+        private Conversation chat;
+        private TaskCompletionSource taskCompletionSource; 
         #region 构造函数
         public ChatPageViewModel()
         {
@@ -35,6 +36,16 @@ namespace NextChatGPTForMAUI.Viewmodels
         [RelayCommand]
         public void Send()
         {
+            //如果用户没有输入文本，则不发送
+            if(string.IsNullOrEmpty(UserText))
+            {
+                return;
+            }
+            //如果上一次的对话还没有结束，则不发送
+            if (taskCompletionSource != null && !taskCompletionSource.Task.IsCompleted)
+            {
+                return;
+            }
             ChatList.Add(new ChatModel
             {
                 IsUser = true,
@@ -56,6 +67,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             };
             Thread thread = new (async () =>
             {
+                taskCompletionSource = new TaskCompletionSource();
                 await foreach (var txt in chat.StreamResponseEnumerableFromChatbotAsync())
                 {
                     if (AiRespondModel.Text == "Thinking...") 
@@ -64,6 +76,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                     }
                     AiRespondModel.Text += txt;
                 }
+                taskCompletionSource.SetResult();
             });
             thread.Start();
             ChatList.Add(AiRespondModel);

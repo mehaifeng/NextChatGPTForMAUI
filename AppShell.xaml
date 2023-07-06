@@ -51,7 +51,7 @@
     <FlyoutItem
         Title="参数控制"
         Icon="&#xe625;">
-        <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}"/>
+        <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}" Route="ParameterPage"/>
     </FlyoutItem>
     <FlyoutItem
         Title="关于"

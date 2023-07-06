@@ -8,7 +8,8 @@
     Title="参数控制"
     Shell.NavBarIsVisible="True"
     Shell.FlyoutBehavior="Flyout"
-    BackgroundColor="{AppThemeBinding Light={StaticResource ParaMainLightBackground},Dark={StaticResource ParaMainDarkBackground}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource ParaMainLightBackground},Dark={StaticResource ParaMainDarkBackground}}"
+    x:DataType="viewmodel:ParameterConfigViewModel">
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="Label">
@@ -16,7 +17,7 @@
             </Style>
             <Style TargetType="Entry">
                 <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource ParaEntryLightBackground}, Dark={StaticResource ParaEntryDarkBackground}}"/>
-                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor},Dark={StaticResource TextDarkColor}}"/>
+                <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="PlaceholderColor" Value="{StaticResource TextLightColor}"/>
             </Style>
         </ResourceDictionary>
@@ -63,6 +64,7 @@
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
+                                    Text="{Binding ParameterModel.Model}"
                                     HorizontalTextAlignment="Center"
                                     WidthRequest="100"
                                     BackgroundColor="#dcdcdc"/>
@@ -95,6 +97,7 @@
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
+                                    Text="{Binding ParameterModel.Temperature}"
                                     Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
                                     Placeholder="0-1"
@@ -129,6 +132,7 @@
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
+                                    Text="{Binding ParameterModel.Top_p}"
                                     Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
                                     Placeholder="0-1"
@@ -163,6 +167,7 @@
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
+                                    Text="{Binding ParameterModel.Frequency_penalty}"
                                     Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
                                     Placeholder="-2.0-2.0"
@@ -197,6 +202,7 @@
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
+                                    Text="{Binding ParameterModel.Presence_penalty}"
                                     Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
                                     Placeholder="-2.0-2.0"
@@ -231,6 +237,7 @@
                                     <RoundRectangle CornerRadius="5"/>
                                 </Border.StrokeShape>
                                 <Entry
+                                    Text="{Binding ParameterModel.Max_tokens}"
                                     Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
                                     WidthRequest="100"
@@ -255,12 +262,14 @@
                             <RoundRectangle CornerRadius="5"/>
                         </Border.StrokeShape>
                         <Entry
+                            Text="{Binding ParameterModel.Apikey}"
                             HorizontalTextAlignment="Center"
                             WidthRequest="400"
                             BackgroundColor="#dcdcdc"/>
                     </Border>
                     <Button
                         Text="保存"
+                        Command="{Binding SaveCommand}"
                         Background="Green"
                         TextColor="White"
                         Margin="0,40,0,0"

@@ -12,17 +12,22 @@ using System.Threading.Tasks;
 using OpenAI_API.Models;
 using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Security.Authentication;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
     public partial class ChatPageViewModel:ObservableObject
     {
+        #region 本地私有属性
         private readonly string path = FileSystem.Current.AppDataDirectory + "/parameter.json";
         private ParameterModel paraConfig;
         private OpenAIAPI api;
-        private Conversation chat;
+        private ChatRequest chatRequest;
         private IList<ChatMessage> messages;
-        private TaskCompletionSource taskCompletionSource; 
+        private TaskCompletionSource taskCompletionSource;
+        #endregion
 
         #region 构造函数
         public ChatPageViewModel()
@@ -47,69 +52,124 @@ namespace NextChatGPTForMAUI.Viewmodels
                 string json = File.ReadAllText(path);
                 paraConfig = JsonConvert.DeserializeObject<ParameterModel>(json);
                 api = new OpenAIAPI(paraConfig.Apikey);
-                chat = api.Chat.CreateConversation(new ChatRequest()
-                {
-                    Model = string.IsNullOrEmpty(paraConfig.Model)? 
-                    "gpt-3.5-turbo" : paraConfig.Model,
-
-                    Temperature = string.IsNullOrEmpty(paraConfig.Temperature) ? 
-                    1 : Convert.ToDouble(paraConfig.Temperature),
-
-                    TopP = string.IsNullOrEmpty(paraConfig.Top_p) ? 
-                    1 : Convert.ToDouble(paraConfig.Top_p),
-
-                    FrequencyPenalty = string.IsNullOrEmpty(paraConfig.Frequency_penalty)? 
-                    0 : Convert.ToDouble(paraConfig.Frequency_penalty),
-
-                    PresencePenalty = string.IsNullOrEmpty(paraConfig.Presence_penalty) ? 
-                    0 : Convert.ToDouble(paraConfig.Presence_penalty),
-
-                    MaxTokens = string.IsNullOrEmpty(paraConfig.Max_tokens)? 
-                    2000 : Convert.ToInt32(paraConfig.Max_tokens),
-
-                    Messages = messages
-                });
+                //初始化ChatAPI参数/重新读取配置并加载到ChatAPI参数
+                LoadChatApiPara();
             }
             else
             {
                 api = new OpenAIAPI("");
-                chat = api.Chat.CreateConversation(new ChatRequest()
-                {
-                    Model = "gpt-3.5-turbo",
-                });
             }
+        }
+        /// <summary>
+        /// 装载ChatApi参数
+        /// </summary>
+        private void LoadChatApiPara()
+        {
+            chatRequest = new ChatRequest()
+            {
+                Model = string.IsNullOrEmpty(paraConfig.Model) ?
+                    "gpt-3.5-turbo" : paraConfig.Model,
+
+                Temperature = string.IsNullOrEmpty(paraConfig.Temperature) ?
+                    1 : Convert.ToDouble(paraConfig.Temperature),
+
+                TopP = string.IsNullOrEmpty(paraConfig.Top_p) ?
+                    1 : Convert.ToDouble(paraConfig.Top_p),
+
+                FrequencyPenalty = string.IsNullOrEmpty(paraConfig.Frequency_penalty) ?
+                    0 : Convert.ToDouble(paraConfig.Frequency_penalty),
+
+                PresencePenalty = string.IsNullOrEmpty(paraConfig.Presence_penalty) ?
+                    0 : Convert.ToDouble(paraConfig.Presence_penalty),
+
+                MaxTokens = string.IsNullOrEmpty(paraConfig.Max_tokens) ?
+                    2000 : Convert.ToInt32(paraConfig.Max_tokens),
+
+                Messages = messages
+            };
         }
 
         /// <summary>
         /// 显示回复
         /// </summary>
-        private void WillShowResultFromAPI()
+        private async void WillShowResultFromAPI(Border o)
         {
+            bool isCorrect = true;
+            taskCompletionSource = new TaskCompletionSource();
             ChatModel AiRespondModel = new()
             {
                 Text = "Thinking...",
                 IsUser = false
             };
-            Thread thread = new (async () =>
+            ChatList.Add(AiRespondModel);
+            Thread thread = new(async () =>
             {
-                taskCompletionSource = new TaskCompletionSource();
-                await foreach (var txt in chat.StreamResponseEnumerableFromChatbotAsync())
+                try
                 {
-                    if (AiRespondModel.Text == "Thinking...") 
-                    { 
-                        AiRespondModel.Text = string.Empty; 
+                    await foreach (var txt in api.Chat.StreamChatEnumerableAsync(chatRequest))
+                    {
+                        if (AiRespondModel.Text == "Thinking...")
+                        {
+                            AiRespondModel.Text = string.Empty;
+                        }
+                        AiRespondModel.Text += txt.Choices[0].Delta.Content;
                     }
-                    AiRespondModel.Text += txt;
+                    taskCompletionSource.SetResult();
                 }
-                taskCompletionSource.SetResult();
+                catch (Exception ex)
+                {
+                    isCorrect = false;
+                    if (ex is AuthenticationException)
+                    {
+                        if (ChatList.Count >= 2)
+                        {
+                            ChatList.Remove(ChatList.Last());
+                        }
+                        static async void action() { await Shell.Current.GoToAsync("//ParameterPage"); }
+                        ShowSnackBar("你的ApiKey是无效的，请检查后重试", action, "点击跳转到配置", o);
+                        taskCompletionSource.SetResult();
+                    }
+                    else if(ex is HttpRequestException)
+                    {
+                        if (ChatList.Count >= 2)
+                        {
+                            ChatList.Remove(ChatList.Last());
+                        }
+                        static async void action() { await Shell.Current.GoToAsync("//ParameterPage"); }
+                        ShowSnackBar("HttpRequestException错误，请检查配置或网络", action, "点击跳转到配置", o);
+                        taskCompletionSource.SetResult();
+                    }
+                }
             });
             thread.Start();
-            ChatList.Add(AiRespondModel);
-            messages.Add(new ChatMessage
+            await taskCompletionSource.Task;
+            if (isCorrect)
             {
-                Content = AiRespondModel.Text,
-                Name = "assistant"
-            });
+                messages.Add(new ChatMessage
+                {
+                    Role = ChatMessageRole.Assistant,
+                    Content = AiRespondModel.Text
+                });
+            }
+            isCorrect = true;
+        }
+        /// <summary>
+        /// 在选定的控件上方显示Snackbar提示
+        /// </summary>
+        /// <param name="snackText"></param>
+        /// <param name="action"></param>
+        /// <param name="buttonText"></param>
+        /// <param name="o"></param>
+        private static async void ShowSnackBar(string snackText,Action action, string buttonText,Border o)
+        {
+            SnackbarOptions snackbarOptions = new()
+            {
+                BackgroundColor = Color.FromArgb("#ce2029"),
+                TextColor = Colors.White,
+                ActionButtonTextColor = Colors.White,
+                CornerRadius = 10
+            };
+            await o.DisplaySnackbar(snackText, action, buttonText, TimeSpan.FromSeconds(5), snackbarOptions);
         }
         #endregion
 
@@ -118,7 +178,7 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// 发送
         /// </summary>
         [RelayCommand]
-        public async void Send()
+        public async void Send(Border o)
         {
             //如果用户没有输入文本，则不发送
             if(string.IsNullOrEmpty(UserText))
@@ -128,7 +188,8 @@ namespace NextChatGPTForMAUI.Viewmodels
             if(paraConfig==null||string.IsNullOrEmpty(paraConfig.Apikey))
             {
                 //goto到设置页面
-                await Shell.Current.GoToAsync("ParameterPage");
+                await Shell.Current.GoToAsync("//ParameterPage");
+                return;
             }
             //如果上一次的对话还没有结束，则不发送
             if (taskCompletionSource != null && !taskCompletionSource.Task.IsCompleted)
@@ -140,14 +201,13 @@ namespace NextChatGPTForMAUI.Viewmodels
                 IsUser = true,
                 Text = UserText
             }) ;
-            chat.AppendUserInput(new string(UserText));
             messages.Add(new ChatMessage
             {
-                 Content = UserText,
-                 Name = "user"  
+                Role = ChatMessageRole.User,
+                Content = UserText
             });
             UserText = string.Empty;
-            WillShowResultFromAPI();
+            WillShowResultFromAPI(o);
         }
         #endregion
 

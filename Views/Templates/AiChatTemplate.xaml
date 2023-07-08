@@ -9,7 +9,7 @@
     <Border
         HorizontalOptions="Start"
         StrokeShape="RoundRectangle 10,10,10,10"
-        Margin="10,10,10,10"
+        Margin="10,10,10,0"
         Padding="10,0,10,0"
         BackgroundColor="{AppThemeBinding Light={StaticResource AiChatBoxLightBackground}, Dark={StaticResource AiChatBoxDarkBackground}}">
         <Editor

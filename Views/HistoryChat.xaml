@@ -5,37 +5,49 @@
     xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Class="NextChatGPTForMAUI.Views.HistoryChat"
     Title="历史对话"
-    BackgroundColor="{AppThemeBinding Light={StaticResource MainLightBackground},Dark={StaticResource MainDarkBackground}}"
+    BackgroundColor="{AppThemeBinding Light={x:StaticResource ChatBorderLightBackground},Dark={x:StaticResource Key=ChatBordeDarkBackground}}"
     Shell.NavBarIsVisible="True"
-    Shell.FlyoutBehavior="Flyout">
+    Shell.FlyoutBehavior="Flyout"
+    x:DataType="viewmodel:HistoryChatViewModel"
+    Padding="8">
     <ScrollView>
-        <CollectionView>
+        <CollectionView
+            x:Name="CollectionView"
+            ItemsSource="{Binding HistoryTitleList}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <SwipeView
                         Margin="0,0,0,8">
                         <SwipeView.RightItems>
-                            <SwipeItems>
-                                <SwipeItem
-                                    Text="删除"
-                                    CommandParameter="{Binding .}">
-                                </SwipeItem>
-                            </SwipeItems>
+                            <SwipeItemView >
+                                <Border>
+                                    <Button
+                                        x:Name="DeleteItemBtn"
+                                        Text="删除"
+                                        TextColor="White"
+                                        FontSize="Small"
+                                        BackgroundColor="#ff2052"
+                                        CornerRadius="10"/>
+                                </Border>
+                            </SwipeItemView>
                         </SwipeView.RightItems>
                         <Border
-                            StrokeShape="{RoundRectangle CornerRadius=15}"
+                            StrokeShape="{RoundRectangle CornerRadius=10}"
                             StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource LightHistoryItemBack},Dark={StaticResource DarkHistoryItemBack}}"
-                            InputTransparent="False" 
-                            Padding="10"
-                            HeightRequest="50">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    NumberOfTapsRequired="1"
-                                    CommandParameter ="{Binding .}"/>
-                            </Border.GestureRecognizers>
-                            <Label
-                                VerticalOptions="CenterAndExpand"/>
+                            BackgroundColor="{AppThemeBinding Light={StaticResource AiChatBoxLightBackground}, Dark={StaticResource AiChatBoxDarkBackground}}"
+                            Padding="10">
+                            <Editor
+                                Text="{Binding .}"
+                                TextColor="{AppThemeBinding Light=Black,Dark=White}"
+                                IsReadOnly="True"
+                                AutoSize="TextChanges"
+                                VerticalOptions="Center">
+                                <Editor.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding HistoryChatSelectCommand, Source={RelativeSource AncestorType={x:Type viewmodel:HistoryChatViewModel}}}"
+                                        CommandParameter="{Binding .}"/>
+                                </Editor.GestureRecognizers>
+                            </Editor>
                         </Border>
                     </SwipeView>
                 </DataTemplate>

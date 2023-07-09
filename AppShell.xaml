@@ -41,7 +41,7 @@
     <FlyoutItem
         Title="对话"
         Icon="&#xe8e8;">
-        <ShellContent ContentTemplate="{DataTemplate view:ChatPage}"/>
+        <ShellContent ContentTemplate="{DataTemplate view:ChatPage}" Route="ChatPage"/>
     </FlyoutItem>
     <FlyoutItem
         Title="历史对话"

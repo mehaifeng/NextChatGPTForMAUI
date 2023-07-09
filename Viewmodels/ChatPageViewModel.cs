@@ -15,18 +15,23 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Security.Authentication;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
+using NextChatGPTForMAUI.Views;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
     public partial class ChatPageViewModel:ObservableObject
     {
         #region 本地私有属性
-        private readonly string path = FileSystem.Current.AppDataDirectory + "/parameter.json";
+        private readonly string path = $"{FileSystem.Current.AppDataDirectory}/parameter.json";
+        private readonly string savePath = $"{FileSystem.Current.AppDataDirectory}/saveFile.json";
+        private List<HistoryChatRequest> historyChatRequestsList;
         private ParameterModel paraConfig;
         private OpenAIAPI api;
         private ChatRequest chatRequest;
         private IList<ChatMessage> messages;
         private TaskCompletionSource taskCompletionSource;
+        private string oldChatTimeId;
         #endregion
 
         #region 构造函数
@@ -36,7 +41,16 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 ChatPageInitial();
             });
+            WeakReferenceMessenger.Default.Register<HistoryChatRequest, string>(this, "ReloadHistoryChat", (r, m) =>
+            {
+                oldChatTimeId = m.TimeId;
+                ChatList = new ObservableCollection<ChatModel>(m.HistoryChatModel);
+                chatRequest = m.History;
+                messages = m.History.Messages;
+            });
             messages = new List<ChatMessage>();
+            ChatList = new ObservableCollection<ChatModel>();
+            historyChatRequestsList = new List<HistoryChatRequest>();
             ChatPageInitial();
         }
         #endregion
@@ -58,6 +72,11 @@ namespace NextChatGPTForMAUI.Viewmodels
             else
             {
                 api = new OpenAIAPI("");
+            }
+            if (File.Exists(savePath))
+            {
+                string json = File.ReadAllText(savePath);
+                historyChatRequestsList = JsonConvert.DeserializeObject<List<HistoryChatRequest>>(json);
             }
         }
         /// <summary>
@@ -209,6 +228,58 @@ namespace NextChatGPTForMAUI.Viewmodels
             UserText = string.Empty;
             WillShowResultFromAPI(o);
         }
+        /// <summary>
+        /// 清空/保存
+        /// </summary>
+        [RelayCommand]
+        public async void ClearAndSave()
+        {
+            if (ChatList.Count > 0)
+            {
+                if(string.IsNullOrEmpty(oldChatTimeId))
+                {
+                    chatRequest.Messages.Add(new ChatMessage
+                    {
+                        Role = ChatMessageRole.User,
+                        Content = "请根据以上内容总结一句简短的标题，50字以内"
+                    });
+                    var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
+                    chatRequest.Messages.Remove(chatRequest.Messages.Last());
+                    historyChatRequestsList.Add(new HistoryChatRequest
+                    {
+                        TimeId = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                        HistoryTitle = summary.ToString(),
+                        History = chatRequest,
+                        HistoryChatModel = ChatList.ToList()
+                    });
+                }
+                else if(historyChatRequestsList.First(t=>t.TimeId==oldChatTimeId).HistoryChatModel.Count!=ChatList.Count)
+                {
+                    chatRequest.Messages.Add(new ChatMessage
+                    {
+                        Role = ChatMessageRole.User,
+                        Content = "请根据以上内容总结一句简短的标题，50字以内"
+                    });
+                    var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
+                    chatRequest.Messages.Remove(chatRequest.Messages.Last());
+                    foreach(var item in historyChatRequestsList)
+                    {
+                        if(item.TimeId == oldChatTimeId)
+                        {
+                            item.History = chatRequest;
+                            item.HistoryChatModel = ChatList.ToList();
+                            item.HistoryTitle = summary.ToString();
+                        }
+                    }
+                }
+                string json = JsonConvert.SerializeObject(historyChatRequestsList);
+                await File.WriteAllTextAsync(path: savePath, json);
+                //保存后清空界面和内存,并实例化HistoryChatViewModel
+                ChatList.Clear();
+                chatRequest.Messages.Clear();
+                WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
+            }
+        }
         #endregion
 
         #region 属性
@@ -216,7 +287,8 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// AI和用户的所有对话框信息集合
         /// </summary>
         [ObservableProperty]
-        ObservableCollection<ChatModel> chatList = new();
+        private ObservableCollection<ChatModel> chatList;
+
         /// <summary>
         /// 用户输入的文本
         /// </summary>

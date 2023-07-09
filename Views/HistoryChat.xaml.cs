@@ -6,6 +6,7 @@ public partial class HistoryChat : ContentPage
 {
     public HistoryChat()
 	{
-		InitializeComponent();
+        InitializeComponent();
+        BindingContext = new HistoryChatViewModel(); 
     }
 }

@@ -37,16 +37,23 @@ namespace NextChatGPTForMAUI.Viewmodels
         #region 构造函数
         public ChatPageViewModel()
         {
+            //载入聊天配置
             WeakReferenceMessenger.Default.Register<WeakReferenceMessenger, string>(this, "ParameterConfigSetup", (r, m) =>
             {
                 ChatPageInitial();
             });
+            //载入历史对话
             WeakReferenceMessenger.Default.Register<HistoryChatRequest, string>(this, "ReloadHistoryChat", (r, m) =>
             {
                 oldChatTimeId = m.TimeId;
                 ChatList = new ObservableCollection<ChatModel>(m.HistoryChatModel);
                 chatRequest = m.History;
                 messages = m.History.Messages;
+            });
+            //刷新历史对话列表
+            WeakReferenceMessenger.Default.Register<List<HistoryChatRequest>,string>(this,"RefreshHistoryChatList",(r,m)=>
+            {
+                historyChatRequestsList = m;
             });
             messages = new List<ChatMessage>();
             ChatList = new ObservableCollection<ChatModel>();
@@ -197,7 +204,7 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// 发送
         /// </summary>
         [RelayCommand]
-        public async void Send(Border o)
+        public async Task Send(Border o)
         {
             //如果用户没有输入文本，则不发送
             if(string.IsNullOrEmpty(UserText))
@@ -232,9 +239,9 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// 清空/保存
         /// </summary>
         [RelayCommand]
-        public async void ClearAndSave()
+        public async Task ClearAndSave()
         {
-            if (ChatList.Count > 0)
+            if (ChatList.Count > 0 && taskCompletionSource.Task.IsCompleted)
             {
                 if(string.IsNullOrEmpty(oldChatTimeId))
                 {
@@ -253,28 +260,32 @@ namespace NextChatGPTForMAUI.Viewmodels
                         HistoryChatModel = ChatList.ToList()
                     });
                 }
-                else if(historyChatRequestsList.First(t=>t.TimeId==oldChatTimeId).HistoryChatModel.Count!=ChatList.Count)
+                else if(historyChatRequestsList.Any(t=>t.TimeId==oldChatTimeId))
                 {
-                    chatRequest.Messages.Add(new ChatMessage
+                    if(historyChatRequestsList.First(t => t.TimeId == oldChatTimeId).HistoryChatModel.Count != ChatList.Count)
                     {
-                        Role = ChatMessageRole.User,
-                        Content = "请根据以上内容总结一句简短的标题，50字以内"
-                    });
-                    var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
-                    chatRequest.Messages.Remove(chatRequest.Messages.Last());
-                    foreach(var item in historyChatRequestsList)
-                    {
-                        if(item.TimeId == oldChatTimeId)
+                        chatRequest.Messages.Add(new ChatMessage
                         {
-                            item.History = chatRequest;
-                            item.HistoryChatModel = ChatList.ToList();
-                            item.HistoryTitle = summary.ToString();
+                            Role = ChatMessageRole.User,
+                            Content = "请根据以上内容总结一句简短的标题，50字以内"
+                        });
+                        var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
+                        chatRequest.Messages.Remove(chatRequest.Messages.Last());
+                        foreach (var item in historyChatRequestsList)
+                        {
+                            if (item.TimeId == oldChatTimeId)
+                            {
+                                item.History = chatRequest;
+                                item.HistoryChatModel = ChatList.ToList();
+                                item.HistoryTitle = summary.ToString();
+                            }
                         }
                     }
                 }
                 string json = JsonConvert.SerializeObject(historyChatRequestsList);
                 await File.WriteAllTextAsync(path: savePath, json);
-                //保存后清空界面和内存,并实例化HistoryChatViewModel
+                //保存后清空界面和内存,重置唯一索引时间id
+                oldChatTimeId = string.Empty;
                 ChatList.Clear();
                 chatRequest.Messages.Clear();
                 WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
@@ -286,14 +297,28 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// <summary>
         /// AI和用户的所有对话框信息集合
         /// </summary>
-        [ObservableProperty]
-        private ObservableCollection<ChatModel> chatList;
+        private ObservableCollection<ChatModel> _chatList;
+        /// <summary>
+        /// AI和用户的所有对话框信息集合
+        /// </summary>
+        public ObservableCollection<ChatModel> ChatList
+        {
+            get { return _chatList; }
+            set { SetProperty(ref _chatList, value); }
+        }
 
         /// <summary>
         /// 用户输入的文本
         /// </summary>
-        [ObservableProperty]
-        string userText;
+        private string _userText;
+        /// <summary>
+        /// 用户输入的文本
+        /// </summary>
+        public string UserText
+        {
+            get { return _userText; }
+            set { SetProperty(ref _userText, value); }
+        }
         #endregion
     }
 }

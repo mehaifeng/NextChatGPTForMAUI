@@ -9,6 +9,7 @@
     Shell.NavBarIsVisible="True"
     Shell.FlyoutBehavior="Flyout"
     x:DataType="viewmodel:HistoryChatViewModel"
+    x:Name="HistoryPage"
     Padding="8">
     <ScrollView>
         <CollectionView
@@ -19,15 +20,21 @@
                     <SwipeView
                         Margin="0,0,0,8">
                         <SwipeView.RightItems>
-                            <SwipeItemView >
-                                <Border>
-                                    <Button
-                                        x:Name="DeleteItemBtn"
+                            <SwipeItemView>
+                                <Border
+                                    BackgroundColor="#ff2052"
+                                    StrokeShape="RoundRectangle 10,10,10,10">
+                                    <Label
                                         Text="删除"
                                         TextColor="White"
-                                        FontSize="Small"
-                                        BackgroundColor="#ff2052"
-                                        CornerRadius="10"/>
+                                        HorizontalTextAlignment="Center"
+                                        VerticalTextAlignment="Center"
+                                        FontSize="Small"/>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding BindingContext.DeleteOneHistoryCommand, Source={x:Reference HistoryPage}}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
                                 </Border>
                             </SwipeItemView>
                         </SwipeView.RightItems>

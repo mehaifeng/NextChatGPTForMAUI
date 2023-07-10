@@ -51,8 +51,12 @@ namespace NextChatGPTForMAUI.Viewmodels
         #endregion
 
         #region 命令
+        /// <summary>
+        /// 选择一个对话
+        /// </summary>
+        /// <param name="title"></param>
         [RelayCommand]
-        public async void HistoryChatSelect(string title)
+        public async Task HistoryChatSelect(string title)
         {
             var historyChat = historyChatRequestsList.Where(x => x.HistoryTitle == title).FirstOrDefault();
             if (historyChat != null)
@@ -61,15 +65,48 @@ namespace NextChatGPTForMAUI.Viewmodels
                 await Shell.Current.GoToAsync("//ChatPage");
             }
         }
+
+        /// <summary>
+        /// 删除一个对话
+        /// </summary>
+        /// <param name="title"></param>
+        [RelayCommand]
+        public void DeleteOneHistory(string title)
+        {
+            HistoryTitleList.Remove(title);
+            historyChatRequestsList.Remove(historyChatRequestsList.Where(x => x.HistoryTitle == title).FirstOrDefault());
+            string json = JsonConvert.SerializeObject(historyChatRequestsList);
+            File.WriteAllTextAsync(savePath, json);
+            WeakReferenceMessenger.Default.Send(historyChatRequestsList, "RefreshHistoryChatList");
+        }
         #endregion
 
 
         #region 属性
-        [ObservableProperty]
-        private ObservableCollection<string> historyTitleList;
-
-        [ObservableProperty]
-        private string historyTitle;
+        /// <summary>
+        /// 历史对话列表
+        /// </summary>
+        private ObservableCollection<string> _historyTitleList;
+        /// <summary>
+        /// 历史对话列表
+        /// </summary>
+        public ObservableCollection<string> HistoryTitleList
+        {
+            get { return _historyTitleList; }
+            set { SetProperty(ref  _historyTitleList, value); }
+        }
+        /// <summary>
+        /// 历史标题
+        /// </summary>
+        private string _historyTitle;
+        /// <summary>
+        /// 历史标题
+        /// </summary>
+        public string HistoryTitle
+        {
+            get { return _historyTitle; }
+            set { SetProperty(ref _historyTitle, value); }
+        }
         #endregion
     }
 }

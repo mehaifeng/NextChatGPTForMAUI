@@ -51,7 +51,7 @@
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="7.0.1" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="OpenAI" Version="1.7.2" />
 	</ItemGroup>

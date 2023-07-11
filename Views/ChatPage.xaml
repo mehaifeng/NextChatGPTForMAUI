@@ -94,6 +94,8 @@
                 VerticalOptions="End"
                 FontFamily="iconfont"
                 FontSize="20"
+                Command="{Binding OpenMaskCommand}"
+                CommandParameter="{x:Reference ThisChat}"
                 Text="&#xe61d;"
                 TextColor="White"/>
             <Button

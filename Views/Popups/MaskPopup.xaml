@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
+    xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
+    x:Class="NextChatGPTForMAUI.Views.Popups.MaskPopup"
+    x:DataType="viewmodel:MaskPopupViewModel"
+    Color="Transparent">
+    <Border
+        Padding="5"
+        StrokeShape="{RoundRectangle CornerRadius=10}"
+        WidthRequest="300">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="360"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Label 
+                Grid.Row="0"
+                Text="Mask"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"/>
+            <ScrollView
+                Grid.Row="1">
+                <CollectionView ItemsSource="{Binding MaskModelList}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid x:DataType="model:MaskModel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Picker
+                                    Grid.Column="0"
+                                    SelectedIndex="{Binding SelectIndex}"
+                                    VerticalOptions="Center">
+                                    <Picker.Items>
+                                        <x:String>System</x:String>
+                                        <x:String>User</x:String>
+                                        <x:String>Assistent</x:String>
+                                    </Picker.Items>
+                                </Picker>
+                                <Border
+                                    Padding="2"
+                                    Grid.Column="1"
+                                    StrokeThickness="1"
+                                    Stroke="black"
+                                    StrokeShape="{RoundRectangle CornerRadius=10}">
+                                    <Editor
+                                        Text="{Binding Text}"
+                                        AutoSize="TextChanges"/>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+            <Button
+                Grid.Row="2"
+                Text="+"
+                Command="{Binding AddMaskModelCommand}"
+                WidthRequest="40"
+                HeightRequest="40"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                CornerRadius="50"/>
+        </Grid>
+    </Border>
+</toolkit:Popup>

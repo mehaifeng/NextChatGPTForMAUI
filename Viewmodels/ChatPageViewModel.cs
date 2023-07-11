@@ -17,6 +17,8 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Extensions;
 using NextChatGPTForMAUI.Views;
+using NextChatGPTForMAUI.Views.Popups;
+using CommunityToolkit.Maui.Views;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
@@ -290,6 +292,12 @@ namespace NextChatGPTForMAUI.Viewmodels
                 chatRequest.Messages.Clear();
                 WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
             }
+        }
+        [RelayCommand]
+        public void OpenMask(ContentPage o)
+        {
+            MaskPopup maskPopup = new MaskPopup();
+            o.ShowPopupAsync(maskPopup);
         }
         #endregion
 

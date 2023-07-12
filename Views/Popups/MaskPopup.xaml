@@ -20,7 +20,10 @@
             </Grid.RowDefinitions>
             <Label 
                 Grid.Row="0"
-                Text="Mask"
+                Text="面具"
+                FontAttributes="Bold"
+                FontSize="Large"
+                Margin="0,0,0,10"
                 HorizontalOptions="Center"
                 VerticalOptions="Start"/>
             <ScrollView
@@ -28,7 +31,8 @@
                 <CollectionView ItemsSource="{Binding MaskModelList}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid x:DataType="model:MaskModel">
+                            <Grid x:DataType="model:MaskModel"
+                                  Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="*"/>
@@ -47,7 +51,7 @@
                                     Padding="2"
                                     Grid.Column="1"
                                     StrokeThickness="1"
-                                    Stroke="black"
+                                    Stroke="{AppThemeBinding Light=Black,Dark=White}"
                                     StrokeShape="{RoundRectangle CornerRadius=10}">
                                     <Editor
                                         Text="{Binding Text}"
@@ -58,15 +62,33 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </ScrollView>
-            <Button
+            <Grid
                 Grid.Row="2"
-                Text="+"
-                Command="{Binding AddMaskModelCommand}"
-                WidthRequest="40"
-                HeightRequest="40"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                CornerRadius="50"/>
+                ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Text="+"
+                    Command="{Binding AddMaskModelCommand}"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    CornerRadius="50"/>
+                <Button
+                    Grid.Column="1"
+                    Text="√"
+                    BackgroundColor="LightGreen"
+                    Command="{Binding AddMaskModelCommand}"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    CornerRadius="50"/>
+            </Grid>
         </Grid>
     </Border>
 </toolkit:Popup>

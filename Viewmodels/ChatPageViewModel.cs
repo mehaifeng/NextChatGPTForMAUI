@@ -31,7 +31,6 @@ namespace NextChatGPTForMAUI.Viewmodels
         private ParameterModel paraConfig;
         private OpenAIAPI api;
         private ChatRequest chatRequest;
-        private IList<ChatMessage> messages;
         private TaskCompletionSource taskCompletionSource;
         private string oldChatTimeId;
         #endregion
@@ -50,14 +49,12 @@ namespace NextChatGPTForMAUI.Viewmodels
                 oldChatTimeId = m.TimeId;
                 ChatList = new ObservableCollection<ChatModel>(m.HistoryChatModel);
                 chatRequest = m.History;
-                messages = m.History.Messages;
             });
             //刷新历史对话列表
             WeakReferenceMessenger.Default.Register<List<HistoryChatRequest>,string>(this,"RefreshHistoryChatList",(r,m)=>
             {
                 historyChatRequestsList = m;
             });
-            messages = new List<ChatMessage>();
             ChatList = new ObservableCollection<ChatModel>();
             historyChatRequestsList = new List<HistoryChatRequest>();
             ChatPageInitial();
@@ -113,7 +110,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                 MaxTokens = string.IsNullOrEmpty(paraConfig.Max_tokens) ?
                     2000 : Convert.ToInt32(paraConfig.Max_tokens),
 
-                Messages = messages
+                Messages = new List<ChatMessage>()
             };
         }
 
@@ -173,7 +170,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             await taskCompletionSource.Task;
             if (isCorrect)
             {
-                messages.Add(new ChatMessage
+                chatRequest.Messages.Add(new ChatMessage
                 {
                     Role = ChatMessageRole.Assistant,
                     Content = AiRespondModel.Text
@@ -229,7 +226,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                 IsUser = true,
                 Text = UserText
             }) ;
-            messages.Add(new ChatMessage
+            chatRequest.Messages.Add(new ChatMessage
             {
                 Role = ChatMessageRole.User,
                 Content = UserText
@@ -243,8 +240,18 @@ namespace NextChatGPTForMAUI.Viewmodels
         [RelayCommand]
         public async Task ClearAndSave()
         {
+            if (taskCompletionSource == null)
+            {
+                oldChatTimeId = string.Empty;
+                ChatList.Clear();
+                chatRequest.Messages.Clear();
+            }
             if (ChatList.Count > 0 && taskCompletionSource.Task.IsCompleted)
             {
+                if (historyChatRequestsList.Count == 0)
+                {
+                    oldChatTimeId = string.Empty;
+                }
                 if(string.IsNullOrEmpty(oldChatTimeId))
                 {
                     chatRequest.Messages.Add(new ChatMessage
@@ -258,9 +265,9 @@ namespace NextChatGPTForMAUI.Viewmodels
                     {
                         TimeId = DateTime.Now.ToString("yyyyMMddHHmmss"),
                         HistoryTitle = summary.ToString(),
-                        History = chatRequest,
+                        History = new ChatRequest(chatRequest),
                         HistoryChatModel = ChatList.ToList()
-                    });
+                    }) ;
                 }
                 else if(historyChatRequestsList.Any(t=>t.TimeId==oldChatTimeId))
                 {
@@ -269,7 +276,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                         chatRequest.Messages.Add(new ChatMessage
                         {
                             Role = ChatMessageRole.User,
-                            Content = "请根据以上内容总结一句简短的标题，50字以内"
+                            Content = "请根据以上内容总结一句简短的标题"
                         });
                         var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
                         chatRequest.Messages.Remove(chatRequest.Messages.Last());
@@ -277,19 +284,19 @@ namespace NextChatGPTForMAUI.Viewmodels
                         {
                             if (item.TimeId == oldChatTimeId)
                             {
-                                item.History = chatRequest;
-                                item.HistoryChatModel = ChatList.ToList();
+                                item.History = new ChatRequest(chatRequest);
+                                item.HistoryChatModel = new List<ChatModel>(ChatList.ToList());
                                 item.HistoryTitle = summary.ToString();
                             }
                         }
                     }
                 }
                 string json = JsonConvert.SerializeObject(historyChatRequestsList);
-                await File.WriteAllTextAsync(path: savePath, json);
+                File.WriteAllText(path: savePath, json);
                 //保存后清空界面和内存,重置唯一索引时间id
                 oldChatTimeId = string.Empty;
                 ChatList.Clear();
-                chatRequest.Messages.Clear();
+                LoadChatApiPara();
                 WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
             }
         }

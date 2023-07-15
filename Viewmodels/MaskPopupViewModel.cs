@@ -1,5 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Newtonsoft.Json;
 using NextChatGPTForMAUI.Models;
 using System;
 using System.Collections.Generic;
@@ -12,14 +15,20 @@ namespace NextChatGPTForMAUI.Viewmodels
 {
     public partial class MaskPopupViewModel:ObservableObject
     {
+        public readonly string maskPath = $"{FileSystem.Current.AppDataDirectory}/maskfile.json";
         public MaskPopupViewModel()
         {
-            maskModelList = new ObservableCollection<MaskModel>
+            MaskModelList = new ObservableCollection<MaskModel>();
+            if (File.Exists(maskPath))
             {
-                new MaskModel() { Text = "abcdefghqwdw", SelectIndex = 0 },
-                new MaskModel() { Text = "adeqdwqedqed", SelectIndex = 1 },
-                new MaskModel() { Text = "qwdqefergerg", SelectIndex = 2 }
-            };
+                string maskJson = File.ReadAllText(maskPath);
+                List<MaskModel> masks = new(JsonConvert.DeserializeObject<List<MaskModel>>(maskJson));
+                MaskModelList = new ObservableCollection<MaskModel>(masks);
+            }
+            else
+            {
+                MaskModelList = new ObservableCollection<MaskModel> { new MaskModel { SelectIndex = 0 , Text = string.Empty} };
+            }
         }
         #region 可绑定属性
         [ObservableProperty]
@@ -27,10 +36,25 @@ namespace NextChatGPTForMAUI.Viewmodels
         #endregion
 
         #region 命令
+        /// <summary>
+        /// 新增MaskModel
+        /// </summary>
         [RelayCommand]
         public void AddMaskModel()
         {
-            MaskModelList.Add(new MaskModel() { Text = "qwdqefergerg", SelectIndex = 2 });
+            MaskModel newMaskModel = new() { SelectIndex = 0, Text = string.Empty };
+            MaskModelList.Add(newMaskModel);
+            WeakReferenceMessenger.Default.Send(MaskModelList.ToList(), "AddThisPreset");
+        }
+        /// <summary>
+        /// 移除MaskModel
+        /// </summary>
+        /// <param name="o"></param>
+        [RelayCommand]
+        public void RemoveMaskModel(MaskModel o)
+        {
+            MaskModelList.Remove(o);
+            WeakReferenceMessenger.Default.Send(o, "RemoveThisPreset");
         }
         #endregion
     }

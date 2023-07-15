@@ -27,17 +27,20 @@ namespace NextChatGPTForMAUI.Viewmodels
         #region 本地私有属性
         private readonly string path = $"{FileSystem.Current.AppDataDirectory}/parameter.json";
         private readonly string savePath = $"{FileSystem.Current.AppDataDirectory}/saveFile.json";
+        private readonly string maskPath = $"{FileSystem.Current.AppDataDirectory}/maskfile.json";
         private List<HistoryChatRequest> historyChatRequestsList;
         private ParameterModel paraConfig;
         private OpenAIAPI api;
         private ChatRequest chatRequest;
         private TaskCompletionSource taskCompletionSource;
         private string oldChatTimeId;
+        private int sendTimes = 0;
         #endregion
 
         #region 构造函数
         public ChatPageViewModel()
         {
+            #region 注册消息
             //载入聊天配置
             WeakReferenceMessenger.Default.Register<WeakReferenceMessenger, string>(this, "ParameterConfigSetup", (r, m) =>
             {
@@ -55,9 +58,45 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 historyChatRequestsList = m;
             });
+            //插入一条预设
+            WeakReferenceMessenger.Default.Register<List<MaskModel>, string>(this, "AddThisPreset", (r, m) =>
+            {
+                for(int i = 0; i < m.Count; i++)
+                {
+                    if(m.Count == 1)
+                    {
+                        break;
+                    }
+                    if (string.IsNullOrEmpty(m[i].Text))
+                    {
+                        m.RemoveAt(i);
+                    }
+                }
+                var addItem = m.Last();
+                chatRequest.Messages.Insert(m.Count-1, new ChatMessage() 
+                { 
+                    Content = addItem.Text, 
+                    Role = addItem.SelectIndex == 0 ? ChatMessageRole.System : (addItem.SelectIndex == 1 ? ChatMessageRole.User : ChatMessageRole.Assistant) 
+                });
+            });
+            //移除一条预设
+            WeakReferenceMessenger.Default.Register<MaskModel, string>(this, "RemoveThisPreset", (r, m) =>
+            {
+                foreach(var item in chatRequest.Messages)
+                {
+                    if(item.Content == m.Text)
+                    {
+                        chatRequest.Messages.Remove(item);
+                        break;
+                    }
+                }
+            });
+            #endregion
+
             ChatList = new ObservableCollection<ChatModel>();
             historyChatRequestsList = new List<HistoryChatRequest>();
             ChatPageInitial();
+            ReadMaskModelInfos();
         }
         #endregion
 
@@ -74,6 +113,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                 api = new OpenAIAPI(paraConfig.Apikey);
                 //初始化ChatAPI参数/重新读取配置并加载到ChatAPI参数
                 LoadChatApiPara();
+                ReadMaskModelInfos();
             }
             else
             {
@@ -112,6 +152,26 @@ namespace NextChatGPTForMAUI.Viewmodels
 
                 Messages = new List<ChatMessage>()
             };
+        }
+
+        /// <summary>
+        /// 读取面具预设信息(仅在对话界面为空时读取)
+        /// </summary>
+        private void ReadMaskModelInfos()
+        {
+            if (File.Exists(maskPath))
+            {
+                string maskJson = File.ReadAllText(maskPath);
+                List<MaskModel> maskModels = JsonConvert.DeserializeObject<List<MaskModel>>(maskJson);
+                foreach(var item in maskModels)
+                {
+                    chatRequest.Messages.Add(new ChatMessage()
+                    {
+                         Content = item.Text,
+                         Role = item.SelectIndex == 0 ? ChatMessageRole.System : (item.SelectIndex == 1 ? ChatMessageRole.User : ChatMessageRole.Assistant)
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -231,6 +291,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                 Role = ChatMessageRole.User,
                 Content = UserText
             });
+            sendTimes++;
             UserText = string.Empty;
             WillShowResultFromAPI(o);
         }
@@ -297,14 +358,15 @@ namespace NextChatGPTForMAUI.Viewmodels
                 oldChatTimeId = string.Empty;
                 ChatList.Clear();
                 LoadChatApiPara();
+                ReadMaskModelInfos();
                 WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
             }
         }
         [RelayCommand]
-        public void OpenMask(ContentPage o)
+        public async Task OpenMask(ContentPage o)
         {
-            MaskPopup maskPopup = new MaskPopup();
-            o.ShowPopupAsync(maskPopup);
+            MaskPopup maskPopup = new();
+            await o.ShowPopupAsync(maskPopup);
         }
         #endregion
 

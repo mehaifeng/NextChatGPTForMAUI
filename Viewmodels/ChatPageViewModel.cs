@@ -43,7 +43,6 @@ namespace NextChatGPTForMAUI.Viewmodels
             ChatList = new ObservableCollection<ChatModel>();
             historyChatRequestsList = new List<HistoryChatRequest>();
             ChatPageInitial();
-            LoadMaskModelInfos();
             #endregion
 
             #region 注册消息
@@ -63,6 +62,12 @@ namespace NextChatGPTForMAUI.Viewmodels
             WeakReferenceMessenger.Default.Register<List<HistoryChatRequest>,string>(this,"RefreshHistoryChatList",(r,m)=>
             {
                 historyChatRequestsList = m;
+            });
+            //移除一条消息
+            WeakReferenceMessenger.Default.Register<ChatModel, string>(this, "RemoveSingleChat", (r, m) =>
+            {
+                chatRequest.Messages.Remove(chatRequest.Messages.FirstOrDefault(x => x.Content == m.Text && x.Role == (m.IsUser == true ? ChatMessageRole.User : ChatMessageRole.Assistant)));
+                ChatList.Remove(m);
             });
             //清空预设
             WeakReferenceMessenger.Default.Register<WeakReferenceMessenger, string>(this, "ClearAllPreset", (r, m) =>

@@ -3,21 +3,34 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
       xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
       xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
-      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
       x:Class="NextChatGPTForMAUI.Views.Templates.AiChatTemplate"
-      x:DataType="model:ChatModel">
-    <Border
-        HorizontalOptions="Start"
-        StrokeShape="RoundRectangle 10,10,10,10"
-        Margin="10,10,10,0"
-        Padding="10,0,10,0"
-        BackgroundColor="{AppThemeBinding Light={StaticResource AiChatBoxLightBackground}, Dark={StaticResource AiChatBoxDarkBackground}}">
-        <Editor
-            AutoSize="TextChanges"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            IsReadOnly="True"
-            Text="{Binding Text}"
-            TextColor="{AppThemeBinding Light={StaticResource AiChatBoxLightTextColor}, Dark={StaticResource AiChatBoxDarkTextColor}}"/>
-    </Border>
+      x:DataType="model:ChatModel"
+      x:Name="AiBox">
+    <SwipeView 
+        Threshold="{Binding Width, Source={x:Reference MessageBox}}"
+        SwipeEnded="AiBox_SwipeEnded"
+        SwipeChanging="AiBox_SwipeChanging">
+        <SwipeView.RightItems 
+            SwipeBehaviorOnInvoked="Close"
+            Mode="Execute">
+            <SwipeItem
+                BackgroundColor="Transparent">
+
+            </SwipeItem>
+        </SwipeView.RightItems>
+        <Border
+            x:Name="MessageBox"
+            HorizontalOptions="Start"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            Margin="10,10,10,0"
+            Padding="10,0,10,0"
+            BackgroundColor="{AppThemeBinding Light={StaticResource AiChatBoxLightBackground}, Dark={StaticResource AiChatBoxDarkBackground}}">
+            <Editor
+                AutoSize="TextChanges"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Text="{Binding Text, Mode=TwoWay,UpdateSourceEventName=TextChanged}"
+                TextColor="{AppThemeBinding Light={StaticResource AiChatBoxLightTextColor}, Dark={StaticResource AiChatBoxDarkTextColor}}"/>
+        </Border>
+    </SwipeView>
 </Grid>

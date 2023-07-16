@@ -44,6 +44,8 @@
             </Border.StrokeShape>
             <!--以下是聊天生成内容-->
             <CollectionView
+                ItemsUpdatingScrollMode="KeepScrollOffset"
+                Margin="0,0,0,8"
                 ItemsSource="{Binding ChatList}"
                 ItemTemplate="{StaticResource ChatTemplateSelector}">
             </CollectionView>

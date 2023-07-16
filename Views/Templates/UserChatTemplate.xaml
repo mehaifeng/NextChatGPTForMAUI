@@ -4,19 +4,29 @@
       xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
       xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
       x:Class="NextChatGPTForMAUI.Views.Templates.UserChatTemplate"
-      x:DataType="model:ChatModel">
-    <Border
-        HorizontalOptions="End"
-        StrokeShape="RoundRectangle 10,10,10,10"
-        Margin="10,10,10,0"
-        Padding="10,0,10,0"
-        BackgroundColor="{StaticResource UserChatBoxBackground}">
-        <Editor
-            AutoSize="TextChanges"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            IsReadOnly="True"
-            TextColor="{StaticResource UserChatBoxTextColor}"
-            Text="{Binding Text, Mode=TwoWay}"/>
-    </Border>
+      x:DataType="model:ChatModel"
+      x:Name="UserBox">
+    <SwipeView Threshold="{Binding Width, Source={x:Reference MessageBox}}"
+               SwipeEnded="UserBox_SwipeEnded"
+               SwipeChanging="UserBox_SwipeChanging">
+        <SwipeView.LeftItems>
+            <SwipeItem BackgroundColor="Transparent">
+                
+            </SwipeItem>
+        </SwipeView.LeftItems>
+        <Border
+            x:Name="MessageBox"
+            HorizontalOptions="End"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            Margin="10,10,10,0"
+            Padding="10,0,10,0"
+            BackgroundColor="{StaticResource UserChatBoxBackground}">
+            <Editor
+                AutoSize="TextChanges"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                TextColor="{StaticResource UserChatBoxTextColor}"
+                Text="{Binding Text, Mode=TwoWay,UpdateSourceEventName=TextChanged}"/>
+        </Border>
+    </SwipeView>
 </Grid>

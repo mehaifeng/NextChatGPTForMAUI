@@ -26,6 +26,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             WeakReferenceMessenger.Default.Register<string,string>(this,"ReloadHistoryList", (r, m) =>
             {
                 LoadHistoryChat();
+                return;
             });
             LoadHistoryChat();
         }

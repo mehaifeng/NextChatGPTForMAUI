@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
 using NextChatGPTForMAUI.Viewmodels;
 
@@ -15,9 +16,16 @@ public partial class MaskPopup : Popup
         BindingContext = _viewmodel;
     }
 
-    private void OneMaskPopup_Closed(object sender, CommunityToolkit.Maui.Core.PopupClosedEventArgs e)
+    private async void OneMaskPopup_Closed(object sender, CommunityToolkit.Maui.Core.PopupClosedEventArgs e)
     {
+        WeakReferenceMessenger.Default.Send(WeakReferenceMessenger.Default, "ClearAllPreset");
         var maskJson = JsonConvert.SerializeObject(_viewmodel.MaskModelList.ToList());
-        File.WriteAllText(_viewmodel.maskPath, maskJson);
+        await File.WriteAllTextAsync(_viewmodel.maskPath, maskJson);
+        if(!_viewmodel.isRemoved && !_viewmodel.isAdded)
+        {
+            return;
+        }
+        WeakReferenceMessenger.Default.Send(WeakReferenceMessenger.Default, "ClearAllPreset");
+        WeakReferenceMessenger.Default.Send(WeakReferenceMessenger.Default, "LoadMaskModels");
     }
 }

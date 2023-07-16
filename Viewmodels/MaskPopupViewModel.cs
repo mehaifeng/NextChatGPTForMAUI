@@ -16,19 +16,25 @@ namespace NextChatGPTForMAUI.Viewmodels
     public partial class MaskPopupViewModel:ObservableObject
     {
         public readonly string maskPath = $"{FileSystem.Current.AppDataDirectory}/maskfile.json";
+        public bool isAdded;
+        public bool isRemoved;
         public MaskPopupViewModel()
         {
             MaskModelList = new ObservableCollection<MaskModel>();
+            //如果有预设文件则读取预设
             if (File.Exists(maskPath))
             {
                 string maskJson = File.ReadAllText(maskPath);
                 List<MaskModel> masks = new(JsonConvert.DeserializeObject<List<MaskModel>>(maskJson));
                 MaskModelList = new ObservableCollection<MaskModel>(masks);
             }
+            //否则增加一条空预设
             else
             {
-                MaskModelList = new ObservableCollection<MaskModel> { new MaskModel { SelectIndex = 0 , Text = string.Empty} };
+                AddMaskModel();
             }
+            isAdded = false;
+            isRemoved = false;
         }
         #region 可绑定属性
         [ObservableProperty]
@@ -44,7 +50,7 @@ namespace NextChatGPTForMAUI.Viewmodels
         {
             MaskModel newMaskModel = new() { SelectIndex = 0, Text = string.Empty };
             MaskModelList.Add(newMaskModel);
-            WeakReferenceMessenger.Default.Send(MaskModelList.ToList(), "AddThisPreset");
+            isAdded = true;
         }
         /// <summary>
         /// 移除MaskModel
@@ -54,7 +60,7 @@ namespace NextChatGPTForMAUI.Viewmodels
         public void RemoveMaskModel(MaskModel o)
         {
             MaskModelList.Remove(o);
-            WeakReferenceMessenger.Default.Send(o, "RemoveThisPreset");
+            isRemoved = true;
         }
         #endregion
     }

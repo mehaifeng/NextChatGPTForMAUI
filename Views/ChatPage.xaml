@@ -36,6 +36,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Border
+            Margin="0,0,0,5"
             BackgroundColor="{AppThemeBinding Light={x:StaticResource ChatBorderLightBackground},Dark={x:StaticResource Key=ChatBordeDarkBackground}}"
             StrokeThickness="{AppThemeBinding Light=1,Dark=0}">
             <Border.StrokeShape>
@@ -49,17 +50,16 @@
         </Border>
         <Grid
             Grid.Row="1"
-            Margin="0,5,0,0">
+            ColumnSpacing="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="6*"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
             </Grid.ColumnDefinitions>
             <!--清空并保存-->
             <Button
                 Grid.Column="0"
-                Margin="0,0,5,0"
                 BackgroundColor="#d2691e"
                 VerticalOptions="End"
                 FontFamily="iconfont"
@@ -71,8 +71,7 @@
             <Border
                 x:Name="InputBorder"
                 Grid.Column="1"
-                Margin="0,0,5,0"
-                Padding="5,-1,5,-1"
+                Padding="3,0,3,0"
                 VerticalOptions="End"
                 BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=InputBorderLightBackground},Dark={x:StaticResource Key=InputBorderDarkBackground}}"
                 StrokeThickness="{AppThemeBinding Light=1,Dark=0}">
@@ -88,8 +87,8 @@
                     TextColor="{AppThemeBinding Light=Black,Dark=White}"/>
             </Border>
             <Button
+                x:Name="MaskBtn"
                 Grid.Column="2"
-                Margin="0,0,5,0"
                 BackgroundColor="Purple"
                 VerticalOptions="End"
                 FontFamily="iconfont"
@@ -103,6 +102,7 @@
                 Grid.Column="3"
                 BackgroundColor="#009000"
                 Text="发送"
+                HeightRequest="{Binding Height, Source={x:Reference MaskBtn}}"
                 Command="{Binding SendCommand}"
                 CommandParameter="{x:Reference InputBorder}"
                 TextColor="White"

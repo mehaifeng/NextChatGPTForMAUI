@@ -1,16 +1,12 @@
 ﻿using NextChatGPTForMAUI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using OpenAI_API;
-using OpenAI_API.Chat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenAI_API.Models;
-using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Security.Authentication;
 using CommunityToolkit.Maui.Alerts;
@@ -19,19 +15,20 @@ using CommunityToolkit.Maui.Core.Extensions;
 using NextChatGPTForMAUI.Views;
 using NextChatGPTForMAUI.Views.Popups;
 using CommunityToolkit.Maui.Views;
+using Newtonsoft.Json;
+using NextChatGPTForMAUI.Tools;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
-    public partial class ChatPageViewModel:ObservableObject
+    public partial class ChatPageViewModel:ChatRequestHttp
     {
         #region 本地私有属性
         private readonly string path = $"{FileSystem.Current.AppDataDirectory}/parameter.json";
         private readonly string savePath = $"{FileSystem.Current.AppDataDirectory}/saveFile.json";
         private readonly string maskPath = $"{FileSystem.Current.AppDataDirectory}/maskfile.json";
+        private ChatRequest chatRequest;
         private List<HistoryChatRequest> historyChatRequestsList;
         private ParameterModel paraConfig;
-        private OpenAIAPI api;
-        private ChatRequest chatRequest;
         private TaskCompletionSource taskCompletionSource;
         private string oldChatTimeId;
         #endregion
@@ -56,7 +53,6 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 oldChatTimeId = m.TimeId;
                 ChatList = new ObservableCollection<ChatModel>(m.HistoryChatModel);
-                chatRequest = m.History;
             });
             //刷新历史对话列表
             WeakReferenceMessenger.Default.Register<List<HistoryChatRequest>,string>(this,"RefreshHistoryChatList",(r,m)=>
@@ -66,27 +62,12 @@ namespace NextChatGPTForMAUI.Viewmodels
             //移除一条消息
             WeakReferenceMessenger.Default.Register<ChatModel, string>(this, "RemoveSingleChat", (r, m) =>
             {
-                chatRequest.Messages.Remove(chatRequest.Messages.FirstOrDefault(x => x.Content == m.Text && x.Role == (m.IsUser == true ? ChatMessageRole.User : ChatMessageRole.Assistant)));
-                ChatList.Remove(m);
+
             });
             //清空预设
             WeakReferenceMessenger.Default.Register<WeakReferenceMessenger, string>(this, "ClearAllPreset", (r, m) =>
             {
-                if(chatRequest.Messages.Count > 0)
-                {
-                    List<ChatMessage> temps = new(chatRequest.Messages);
-                    foreach (var item in temps)
-                    {
-                        if (item.IsMaskType)
-                        {
-                            chatRequest.Messages.Remove(item);
-                        }
-                        else if (!item.IsMaskType)
-                        {
-                            break;
-                        }
-                    }
-                }
+                
             });
             //重载预设
             WeakReferenceMessenger.Default.Register<WeakReferenceMessenger, string>(this, "LoadMaskModels", (r, m) =>
@@ -107,16 +88,15 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 string json = File.ReadAllText(path);
                 paraConfig = JsonConvert.DeserializeObject<ParameterModel>(json);
-                api = new OpenAIAPI(paraConfig?.Apikey);
             }
             else
             {
-                api = new OpenAIAPI("");
+
             }
             if (File.Exists(savePath))
             {
                 string json = File.ReadAllText(savePath);
-                historyChatRequestsList = JsonConvert.DeserializeObject<List<HistoryChatRequest>>(json);
+
             }
             //初始化ChatAPI参数/重新读取配置并加载到ChatAPI参数
             LoadChatApiPara();
@@ -129,25 +109,27 @@ namespace NextChatGPTForMAUI.Viewmodels
         {
             chatRequest = new ChatRequest()
             {
-                Model = string.IsNullOrEmpty(paraConfig?.Model) ?
+                model = string.IsNullOrEmpty(paraConfig?.Model) ?
                     "gpt-3.5-turbo" : paraConfig?.Model,
 
-                Temperature = string.IsNullOrEmpty(paraConfig?.Temperature) ?
+                temperature = string.IsNullOrEmpty(paraConfig?.Temperature) ?
                     1 : Convert.ToDouble(paraConfig?.Temperature),
 
-                TopP = string.IsNullOrEmpty(paraConfig?.Top_p) ?
+                top_p = string.IsNullOrEmpty(paraConfig?.Top_p) ?
                     1 : Convert.ToDouble(paraConfig?.Top_p),
 
-                FrequencyPenalty = string.IsNullOrEmpty(paraConfig?.Frequency_penalty) ?
+                frequency_penalty = string.IsNullOrEmpty(paraConfig?.Frequency_penalty) ?
                     0 : Convert.ToDouble(paraConfig?.Frequency_penalty),
 
-                PresencePenalty = string.IsNullOrEmpty(paraConfig?.Presence_penalty) ?
+                presence_penalty = string.IsNullOrEmpty(paraConfig?.Presence_penalty) ?
                     0 : Convert.ToDouble(paraConfig?.Presence_penalty),
 
-                MaxTokens = string.IsNullOrEmpty(paraConfig?.Max_tokens) ?
+                max_tokens = string.IsNullOrEmpty(paraConfig?.Max_tokens) ?
                     2000 : Convert.ToInt32(paraConfig?.Max_tokens),
 
-                Messages = new List<ChatMessage>()
+                messages = new List<ChatMessage>(),
+
+                stream = true
             };
         }
 
@@ -163,11 +145,11 @@ namespace NextChatGPTForMAUI.Viewmodels
                 int i = 0;
                 foreach(var item in maskModels)
                 {
-                    chatRequest.Messages.Insert(i, new ChatMessage()
+                    chatRequest.messages.Insert(i, new ChatMessage()
                     {
-                         Content = item.Text,
-                         Role = item.SelectIndex == 0? ChatMessageRole.System :(item.SelectIndex ==1? ChatMessageRole.User : ChatMessageRole.Assistant),
-                         IsMaskType = true
+                        content = item.Text,
+                        role = item.SelectIndex == 0 ? "system" : (item.SelectIndex == 1 ? "user" : "assistant"),
+                        IsMaskType = true
                     });
                     i++;
                 }
@@ -191,13 +173,10 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 try
                 {
-                    await foreach (var txt in api.Chat.StreamChatEnumerableAsync(chatRequest))
+                    AiRespondModel.Text = string.Empty;
+                    await foreach(string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Apikey))
                     {
-                        if (AiRespondModel.Text == "Thinking...")
-                        {
-                            AiRespondModel.Text = string.Empty;
-                        }
-                        AiRespondModel.Text += txt.Choices[0].Delta.Content;
+                        AiRespondModel.Text += text;
                     }
                     taskCompletionSource.SetResult();
                 }
@@ -230,10 +209,10 @@ namespace NextChatGPTForMAUI.Viewmodels
             await taskCompletionSource.Task;
             if (isCorrect)
             {
-                chatRequest.Messages.Add(new ChatMessage
+                chatRequest.messages.Add(new ChatMessage
                 {
-                    Role = ChatMessageRole.Assistant,
-                    Content = AiRespondModel.Text
+                    role = "assistant",
+                    content = AiRespondModel.Text
                 });
             }
             isCorrect = true;
@@ -283,12 +262,12 @@ namespace NextChatGPTForMAUI.Viewmodels
                 return;
             }
             //正式发送前，检查请求队列有无空消息，有则移除
-            List<ChatMessage> temps = new(chatRequest.Messages);
+            List<ChatMessage> temps = new(chatRequest.messages);
             foreach(var item in temps)
             {
-                if (string.IsNullOrEmpty(item.Content))
+                if (string.IsNullOrEmpty(item.content))
                 {
-                    chatRequest.Messages.Remove(item);
+                    chatRequest.messages.Remove(item);
                 }
             }
             temps.Clear();
@@ -299,10 +278,10 @@ namespace NextChatGPTForMAUI.Viewmodels
                 Text = UserText
             }) ;
             //将发送的内容添加到请求队列
-            chatRequest.Messages.Add(new ChatMessage
+            chatRequest.messages.Add(new ChatMessage
             {
-                Role = ChatMessageRole.User,
-                Content = UserText
+                role = "user",
+                content = UserText
             });
             //用户发送后，清空输入框
             UserText = string.Empty;
@@ -318,7 +297,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 oldChatTimeId = string.Empty;
                 ChatList.Clear();
-                chatRequest.Messages.Clear();
+                chatRequest.messages.Clear();
             }
             if (ChatList.Count > 0 && taskCompletionSource.Task.IsCompleted)
             {
@@ -328,18 +307,22 @@ namespace NextChatGPTForMAUI.Viewmodels
                 }
                 if(string.IsNullOrEmpty(oldChatTimeId))
                 {
-                    chatRequest.Messages.Add(new ChatMessage
+                    chatRequest.messages.Add(new ChatMessage
                     {
-                        Role = ChatMessageRole.User,
-                        Content = "请根据以上内容总结一句简短的标题，50字以内"
+                        role = "user",
+                        content = "请根据以上内容总结一句简短的标题，50字以内"
                     });
-                    var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
-                    chatRequest.Messages.Remove(chatRequest.Messages.Last());
+                    string summary = null;
+                    await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Apikey))
+                    {
+                        summary += text;
+                    }
+                    chatRequest.messages.Remove(chatRequest.messages.Last());
                     historyChatRequestsList.Add(new HistoryChatRequest
                     {
                         TimeId = DateTime.Now.ToString("yyyyMMddHHmmss"),
                         HistoryTitle = summary.ToString(),
-                        History = new ChatRequest(chatRequest),
+                        History = chatRequest,
                         HistoryChatModel = ChatList.ToList()
                     }) ;
                 }
@@ -347,18 +330,22 @@ namespace NextChatGPTForMAUI.Viewmodels
                 {
                     if(historyChatRequestsList.First(t => t.TimeId == oldChatTimeId).HistoryChatModel.Count != ChatList.Count)
                     {
-                        chatRequest.Messages.Add(new ChatMessage
+                        chatRequest.messages.Add(new ChatMessage
                         {
-                            Role = ChatMessageRole.User,
-                            Content = "请根据以上内容总结一句简短的标题"
+                            role = "user",
+                            content = "请根据以上内容总结一句简短的标题"
                         });
-                        var summary = await api.Chat.CreateChatCompletionAsync(chatRequest);
-                        chatRequest.Messages.Remove(chatRequest.Messages.Last());
+                        string summary = null;
+                        await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Apikey))
+                        {
+                            summary += text;
+                        }
+                        chatRequest.messages.Remove(chatRequest.messages.Last());
                         foreach (var item in historyChatRequestsList)
                         {
                             if (item.TimeId == oldChatTimeId)
                             {
-                                item.History = new ChatRequest(chatRequest);
+                                item.History = chatRequest;
                                 item.HistoryChatModel = new List<ChatModel>(ChatList.ToList());
                                 item.HistoryTitle = summary.ToString();
                             }

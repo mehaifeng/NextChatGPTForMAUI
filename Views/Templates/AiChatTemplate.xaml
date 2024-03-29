@@ -29,6 +29,7 @@
                 AutoSize="TextChanges"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
+                Unfocused="Editor_Unfocused"
                 Text="{Binding Text, Mode=TwoWay,UpdateSourceEventName=TextChanged}"
                 TextColor="{AppThemeBinding Light={StaticResource AiChatBoxLightTextColor}, Dark={StaticResource AiChatBoxDarkTextColor}}"/>
         </Border>

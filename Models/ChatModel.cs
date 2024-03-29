@@ -9,6 +9,12 @@ namespace NextChatGPTForMAUI.Models
 {
     public partial class ChatModel:ObservableObject
     {
+        private string tag;
+        public string Tag
+        {
+            get { return tag; }
+            set { SetProperty(ref tag, value); }
+        }
 
         private string text;
         public string Text

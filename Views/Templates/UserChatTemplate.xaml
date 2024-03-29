@@ -25,6 +25,7 @@
                 AutoSize="TextChanges"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
+                Unfocused="Editor_Unfocused"
                 TextColor="{StaticResource UserChatBoxTextColor}"
                 Text="{Binding Text, Mode=TwoWay,UpdateSourceEventName=TextChanged}"/>
         </Border>

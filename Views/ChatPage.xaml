@@ -1,114 +1,118 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
-             xmlns:template="clr-namespace:NextChatGPTForMAUI.Views.Templates"
-             xmlns:converters ="clr-namespace:NextChatGPTForMAUI.Converters"
-             x:Class="NextChatGPTForMAUI.Views.ChatPage"
-             x:DataType="viewmodel:ChatPageViewModel"
-             Title="对话"
-             Shell.NavBarIsVisible="True"
-             Shell.FlyoutBehavior="Flyout"
-             BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=MainLightBackground},Dark={x:StaticResource Key=MainDarkBackground}}"
-             x:Name="ThisChat">
+<ContentPage
+    x:Class="NextChatGPTForMAUI.Views.ChatPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:NextChatGPTForMAUI.Converters"
+    xmlns:template="clr-namespace:NextChatGPTForMAUI.Views.Templates"
+    xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
+    x:Name="ThisChat"
+    Title="对话"
+    x:DataType="viewmodel:ChatPageViewModel"
+    BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=MainLightBackground},
+                                      Dark={x:StaticResource Key=MainDarkBackground}}"
+    Shell.FlyoutBehavior="Flyout"
+    Shell.NavBarIsVisible="True">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:ControlsConverter x:Key="ControlsConverter"/>
+            <converters:ControlsConverter x:Key="ControlsConverter" />
             <Style x:Key="RespondBorderStrokeThickness" TargetType="Border">
-                <Setter Property="StrokeThickness" Value="{AppThemeBinding Light=1,Dark=0}"/>
+                <Setter Property="StrokeThickness" Value="{AppThemeBinding Light=1, Dark=0}" />
             </Style>
             <DataTemplate x:Key="UserChatTemplate">
-                <template:UserChatTemplate/>
+                <template:UserChatTemplate />
             </DataTemplate>
             <DataTemplate x:Key="AiChatTemplate">
-                <template:AiChatTemplate/>
+                <template:AiChatTemplate />
             </DataTemplate>
-            <template:ChatTemplateSelector 
-                x:Key="ChatTemplateSelector" 
-                UserChatTemplate="{StaticResource UserChatTemplate}"
-                AiChatTemplate="{StaticResource AiChatTemplate}"/>
+            <template:ChatTemplateSelector
+                x:Key="ChatTemplateSelector"
+                AiChatTemplate="{StaticResource AiChatTemplate}"
+                UserChatTemplate="{StaticResource UserChatTemplate}" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    <Grid
-        Padding="5">
+    <Grid Padding="5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border
             Margin="0,0,0,5"
-            BackgroundColor="{AppThemeBinding Light={x:StaticResource ChatBorderLightBackground},Dark={x:StaticResource Key=ChatBordeDarkBackground}}"
-            StrokeThickness="{AppThemeBinding Light=1,Dark=0}">
+            BackgroundColor="{AppThemeBinding Light={x:StaticResource ChatBorderLightBackground},
+                                              Dark={x:StaticResource Key=ChatBordeDarkBackground}}"
+            StrokeThickness="{AppThemeBinding Light=1,
+                                              Dark=0}">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10"/>
+                <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <!--以下是聊天生成内容-->
+            <!--  以下是聊天生成内容  -->
             <CollectionView
-                ItemsUpdatingScrollMode="KeepScrollOffset"
                 Margin="0,0,0,8"
+                ItemTemplate="{StaticResource ChatTemplateSelector}"
                 ItemsSource="{Binding ChatList}"
-                ItemTemplate="{StaticResource ChatTemplateSelector}">
-            </CollectionView>
+                ItemsUpdatingScrollMode="KeepScrollOffset" />
         </Border>
-        <Grid
-            Grid.Row="1"
-            ColumnSpacing="5">
+        <Grid Grid.Row="1" ColumnSpacing="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
-            <!--清空并保存-->
+            <!--  清空并保存  -->
             <Button
                 Grid.Column="0"
                 BackgroundColor="#d2691e"
-                VerticalOptions="End"
+                Command="{Binding ClearAndSaveCommand}"
                 FontFamily="iconfont"
                 FontSize="20"
                 Text="&#xeb86;"
-                Command="{Binding ClearAndSaveCommand}"
-                TextColor="White"/>
-            <!--聊天输入框Border-->
+                TextColor="White"
+                VerticalOptions="Center" />
+            <!--  聊天输入框Border  -->
             <Border
                 x:Name="InputBorder"
                 Grid.Column="1"
                 Padding="3,0,3,0"
-                VerticalOptions="End"
-                BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=InputBorderLightBackground},Dark={x:StaticResource Key=InputBorderDarkBackground}}"
-                StrokeThickness="{AppThemeBinding Light=1,Dark=0}">
+                BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=InputBorderLightBackground},
+                                                  Dark={x:StaticResource Key=InputBorderDarkBackground}}"
+                StrokeThickness="{AppThemeBinding Light=1,
+                                                  Dark=0}"
+                VerticalOptions="End">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
+                    <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <Editor
                     x:Name="EditorControl"
                     AutoSize="TextChanges"
-                    VerticalOptions="CenterAndExpand"
                     Placeholder="在这里输入你的问题..."
                     Text="{Binding UserText}"
-                    TextColor="{AppThemeBinding Light=Black,Dark=White}"/>
+                    TextColor="{AppThemeBinding Light=Black,
+                                                Dark=White}"
+                    VerticalOptions="CenterAndExpand" />
             </Border>
             <Button
                 x:Name="MaskBtn"
                 Grid.Column="2"
                 BackgroundColor="Purple"
-                VerticalOptions="End"
-                FontFamily="iconfont"
-                FontSize="20"
                 Command="{Binding OpenMaskCommand}"
                 CommandParameter="{x:Reference ThisChat}"
+                FontFamily="iconfont"
+                FontSize="20"
                 Text="&#xe61d;"
-                TextColor="White"/>
+                TextColor="White"
+                VerticalOptions="Center" />
             <Button
                 x:Name="SendButton"
                 Grid.Column="3"
                 BackgroundColor="#009000"
-                Text="发送"
-                HeightRequest="{Binding Height, Source={x:Reference MaskBtn}}"
                 Command="{Binding SendCommand}"
                 CommandParameter="{x:Reference InputBorder}"
+                FontAttributes="Bold"
+                HeightRequest="{Binding Height, Source={x:Reference MaskBtn}}"
+                Text="发送"
                 TextColor="White"
-                VerticalOptions="End"/>
+                VerticalOptions="Center" />
         </Grid>
     </Grid>
 </ContentPage>

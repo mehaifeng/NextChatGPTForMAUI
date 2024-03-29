@@ -36,6 +36,12 @@ public partial class AiChatTemplate : Grid
         }
     }
 
-
-
+    private void Editor_Unfocused(object sender, FocusEventArgs e)
+    {
+        ChatModel item = BindingContext as ChatModel;
+        if (item.Text != "Thinking...")
+        {
+            WeakReferenceMessenger.Default.Send(item, "UpdateChatText");
+        }
+    }
 }

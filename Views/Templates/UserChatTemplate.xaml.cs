@@ -33,5 +33,9 @@ public partial class UserChatTemplate : Grid
         }
     }
 
-
+    private void Editor_Unfocused(object sender, FocusEventArgs e)
+    {
+        ChatModel item = BindingContext as ChatModel;
+        WeakReferenceMessenger.Default.Send(item, "UpdateChatText");
+    }
 }

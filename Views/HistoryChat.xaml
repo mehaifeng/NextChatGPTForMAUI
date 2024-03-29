@@ -22,13 +22,14 @@
                         <SwipeView.RightItems>
                             <SwipeItemView>
                                 <Border
-                                    BackgroundColor="#ff2052"
+                                    WidthRequest="50"
+                                    BackgroundColor="#91352f"
                                     StrokeShape="RoundRectangle 10,10,10,10">
                                     <Label
                                         Text="删除"
                                         TextColor="White"
-                                        HorizontalTextAlignment="Center"
-                                        VerticalTextAlignment="Center"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
                                         FontSize="Small"/>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer 

@@ -33,10 +33,11 @@
     </ContentPage.Resources>
     <Grid Padding="5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border
+            Grid.Row="0"
             Margin="0,0,0,5"
             BackgroundColor="{AppThemeBinding Light={x:StaticResource ChatBorderLightBackground},
                                               Dark={x:StaticResource Key=ChatBordeDarkBackground}}"
@@ -50,7 +51,7 @@
                 Margin="0,0,0,8"
                 ItemTemplate="{StaticResource ChatTemplateSelector}"
                 ItemsSource="{Binding ChatList}"
-                ItemsUpdatingScrollMode="KeepScrollOffset" />
+                ItemsUpdatingScrollMode="KeepLastItemInView" />
         </Border>
         <Grid Grid.Row="1" ColumnSpacing="5">
             <Grid.ColumnDefinitions>

@@ -1,33 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Grid xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-      xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
-      xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
-      x:Class="NextChatGPTForMAUI.Views.Templates.UserChatTemplate"
-      x:DataType="model:ChatModel"
-      x:Name="UserBox">
-    <SwipeView Threshold="{Binding Width, Source={x:Reference MessageBox}}"
-               SwipeEnded="UserBox_SwipeEnded"
-               SwipeChanging="UserBox_SwipeChanging">
+<Grid
+    x:Class="NextChatGPTForMAUI.Views.Templates.UserChatTemplate"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
+    xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
+    x:Name="UserBox"
+    x:DataType="model:ChatModel">
+    <SwipeView
+        SwipeChanging="UserBox_SwipeChanging"
+        SwipeEnded="UserBox_SwipeEnded"
+        Threshold="{Binding Width, Source={x:Reference MessageBox}}">
         <SwipeView.LeftItems>
-            <SwipeItem BackgroundColor="Transparent">
-                
-            </SwipeItem>
+            <SwipeItem BackgroundColor="Transparent" />
         </SwipeView.LeftItems>
-        <Border
-            x:Name="MessageBox"
-            HorizontalOptions="End"
-            StrokeShape="RoundRectangle 10,10,10,10"
-            Margin="10,10,10,0"
-            Padding="10,0,10,0"
-            BackgroundColor="{StaticResource UserChatBoxBackground}">
-            <Editor
-                AutoSize="TextChanges"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Unfocused="Editor_Unfocused"
-                TextColor="{StaticResource UserChatBoxTextColor}"
-                Text="{Binding Text, Mode=TwoWay,UpdateSourceEventName=TextChanged}"/>
-        </Border>
+        <Grid Margin="10,10,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Entry
+                Grid.Row="0"
+                Margin="0,0,0,5"
+                FontAttributes="Bold"
+                FontSize="22"
+                HorizontalOptions="End"
+                IsReadOnly="True"
+                Placeholder="🙎"
+                Text="🙎" />
+            <Border
+                x:Name="MessageBox"
+                Grid.Row="1"
+                Padding="10,0,10,0"
+                BackgroundColor="{StaticResource UserChatBoxBackground}"
+                HorizontalOptions="End"
+                StrokeShape="RoundRectangle 10,10,10,10">
+                <Editor
+                    AutoSize="TextChanges"
+                    HorizontalOptions="Center"
+                    Text="{Binding Text, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
+                    TextColor="{StaticResource UserChatBoxTextColor}"
+                    Unfocused="Editor_Unfocused"
+                    VerticalOptions="Center" />
+            </Border>
+        </Grid>
     </SwipeView>
 </Grid>

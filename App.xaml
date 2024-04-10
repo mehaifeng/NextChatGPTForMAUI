@@ -1,44 +1,45 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:NextChatGPTForMAUI"
-             x:Class="NextChatGPTForMAUI.App">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Application
+    x:Class="NextChatGPTForMAUI.App"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:NextChatGPTForMAUI">
     <Application.Resources>
         <ResourceDictionary>
-            <!--FlyoutMenu明亮模式色彩-->
+            <!--  FlyoutMenu明亮模式色彩  -->
             <Color x:Key="FlyoutMenuLightBackground">White</Color>
             <Color x:Key="FlyoutMenuLightText">#000000</Color>
-            <!--FlyoutMenu黑暗模式色彩-->
+            <!--  FlyoutMenu黑暗模式色彩  -->
             <Color x:Key="FlyoutMenuDarkBackground">#36454f</Color>
             <Color x:Key="FlyoutMenuDarkText">#ffffff</Color>
-            <!--ChatPage明亮模式色彩-->
+            <!--  ChatPage明亮模式色彩  -->
             <Color x:Key="MainLightBackground">White</Color>
             <Color x:Key="ChatBorderLightBackground">#dcdcdc</Color>
             <Color x:Key="InputBorderLightBackground">#dcdcdc</Color>
-            <!--ChatPage黑暗模式色彩-->
+            <!--  ChatPage黑暗模式色彩  -->
             <Color x:Key="MainDarkBackground">Gray</Color>
             <Color x:Key="ChatBordeDarkBackground">#36454f</Color>
             <Color x:Key="InputBorderDarkBackground">#36454f</Color>
-            <!--ParameterConfig明亮模式色彩-->
+            <!--  ParameterConfig明亮模式色彩  -->
             <Color x:Key="ParaMainLightBackground">#ffffff</Color>
             <Color x:Key="ParaEntryLightBackground">#ffffff</Color>
             <Color x:Key="ParaEntryStrokeness">Black</Color>
-            <!--ParameterConfig黑暗模式色彩-->
+            <!--  ParameterConfig黑暗模式色彩  -->
             <Color x:Key="ParaMainDarkBackground">#36454f</Color>
             <Color x:Key="ParaEntryDarkBackground">#26619c</Color>
-            <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
-            <!--UserChatTemplate色彩-->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  -->
+            <!--  UserChatTemplate色彩  -->
             <Color x:Key="UserChatBoxBackground">#7cfc00</Color>
             <Color x:Key="UserChatBoxTextColor">Black</Color>
-            <!--AiChatTemplate明亮模式色彩-->
+            <!--  AiChatTemplate明亮模式色彩  -->
             <Color x:Key="AiChatBoxLightBackground">White</Color>
             <Color x:Key="AiChatBoxLightTextColor">Black</Color>
-            <!--AiChatTemplate黑暗模式色彩-->
+            <!--  AiChatTemplate黑暗模式色彩  -->
             <Color x:Key="AiChatBoxDarkBackground">#26619c</Color>
             <Color x:Key="AiChatBoxDarkTextColor">White</Color>
-            <!--Label明亮模式色彩-->
+            <!--  Label明亮模式色彩  -->
             <Color x:Key="TextLightColor">Gray</Color>
-            <!--Label黑暗模式色彩-->
+            <!--  Label黑暗模式色彩  -->
             <Color x:Key="TextDarkColor">LightGray</Color>
         </ResourceDictionary>
     </Application.Resources>

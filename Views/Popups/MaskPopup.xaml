@@ -9,7 +9,6 @@
     xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Name="OneMaskPopup"
     x:DataType="viewmodel:MaskPopupViewModel"
-    CanBeDismissedByTappingOutsideOfPopup="False"
     Closed="OneMaskPopup_Closed"
     Color="Transparent">
     <Border
@@ -143,61 +142,59 @@
                 Stroke="LightGray"
                 StrokeShape="{RoundRectangle CornerRadius=10}"
                 StrokeThickness="1">
-                <ScrollView BackgroundColor="Transparent">
-                    <CollectionView ItemsSource="{Binding SelectedMask.MaskModels}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,0,0,8" x:DataType="model:MaskModel">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="30" />
-                                    </Grid.ColumnDefinitions>
-                                    <Picker
-                                        Grid.Column="0"
-                                        SelectedIndex="{Binding SelectIndex}"
-                                        TextColor="{AppThemeBinding Light=Black,
-                                                                    Dark=White}"
-                                        VerticalOptions="Center">
-                                        <Picker.Items>
-                                            <x:String>System</x:String>
-                                            <x:String>User</x:String>
-                                            <x:String>Assistent</x:String>
-                                        </Picker.Items>
-                                    </Picker>
-                                    <Border
-                                        Grid.Column="1"
-                                        Padding="2"
-                                        BackgroundColor="{AppThemeBinding Light=White,
-                                                                          Dark=Gray}"
-                                        Stroke="{AppThemeBinding Light=Black,
-                                                                 Dark=LightGray}"
-                                        StrokeShape="{RoundRectangle CornerRadius=10}"
-                                        StrokeThickness="1">
-                                        <Editor
-                                            AutoSize="TextChanges"
-                                            Text="{Binding Text}"
-                                            TextColor="Black" />
-                                    </Border>
-                                    <Button
-                                        Grid.Column="2"
-                                        Margin="5,0,0,0"
-                                        BackgroundColor="Red"
-                                        Command="{Binding RemoveMaskModelCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MaskPopupViewModel}}}"
-                                        CommandParameter="{Binding .}"
-                                        CornerRadius="50"
-                                        FontFamily="iconfont"
-                                        HeightRequest="25"
-                                        HorizontalOptions="Center"
-                                        Opacity="0.7"
-                                        Text="&#xecb9;"
-                                        VerticalOptions="Center"
-                                        WidthRequest="25" />
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </ScrollView>
+                <CollectionView ItemsSource="{Binding SelectedMask.MaskModels}" ItemsUpdatingScrollMode="KeepLastItemInView">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,8" x:DataType="model:MaskModel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
+                                </Grid.ColumnDefinitions>
+                                <Picker
+                                    Grid.Column="0"
+                                    SelectedIndex="{Binding SelectIndex}"
+                                    TextColor="{AppThemeBinding Light=Black,
+                                                                Dark=White}"
+                                    VerticalOptions="Center">
+                                    <Picker.Items>
+                                        <x:String>System</x:String>
+                                        <x:String>User</x:String>
+                                        <x:String>Assistent</x:String>
+                                    </Picker.Items>
+                                </Picker>
+                                <Border
+                                    Grid.Column="1"
+                                    Padding="2"
+                                    BackgroundColor="{AppThemeBinding Light=White,
+                                                                      Dark=Gray}"
+                                    Stroke="{AppThemeBinding Light=Black,
+                                                             Dark=LightGray}"
+                                    StrokeShape="{RoundRectangle CornerRadius=10}"
+                                    StrokeThickness="1">
+                                    <Editor
+                                        AutoSize="TextChanges"
+                                        Text="{Binding Text}"
+                                        TextColor="Black" />
+                                </Border>
+                                <Button
+                                    Grid.Column="2"
+                                    Margin="5,0,0,0"
+                                    BackgroundColor="Red"
+                                    Command="{Binding RemoveMaskModelCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MaskPopupViewModel}}}"
+                                    CommandParameter="{Binding .}"
+                                    CornerRadius="50"
+                                    FontFamily="iconfont"
+                                    HeightRequest="25"
+                                    HorizontalOptions="Center"
+                                    Opacity="0.7"
+                                    Text="&#xecb9;"
+                                    VerticalOptions="Center"
+                                    WidthRequest="25" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </Border>
             <Grid Grid.Row="3" Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>

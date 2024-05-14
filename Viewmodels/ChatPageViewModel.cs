@@ -223,7 +223,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 try
                 {
-                    await foreach(string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Apikey))
+                    await foreach(string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Api_address, paraConfig.Apikey))
                     {
                         if (!isDeleteThinking)
                         {
@@ -367,7 +367,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                         content = "这是一条作为system的指令：请根据以上内容总结一句简短的标题，50字以内"
                     });
                     string summary = null;
-                    await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Apikey))
+                    await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Apikey, paraConfig.Apikey))
                     {
                         summary += text;
                     }
@@ -390,7 +390,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                             content = "这是一条作为system的指令：请根据以上内容总结一句简短的标题，50字以内"
                         });
                         string summary = null;
-                        await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Apikey))
+                        await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Apikey, paraConfig.Apikey))
                         {
                             summary += text;
                         }

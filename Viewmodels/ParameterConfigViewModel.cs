@@ -46,6 +46,21 @@ namespace NextChatGPTForMAUI.Viewmodels
             toast.Show();
             WeakReferenceMessenger.Default.Send(WeakReferenceMessenger.Default, "ParameterConfigSetup");
         }
+        [RelayCommand]
+        private async static Task OpenUrl(string url)
+        {
+            try
+            {
+                Uri uri = new Uri(url);
+                await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
+            }
+            catch
+            {
+                var toast = Toast.Make("本机未发现已安装的浏览器应用");
+                await toast.Show();
+                // An unexpected error occurred. No browser may be installed on the device.
+            }
+        }
         #endregion
     }
 }

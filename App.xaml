@@ -3,7 +3,9 @@
     x:Class="NextChatGPTForMAUI.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:NextChatGPTForMAUI">
+    xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:local="clr-namespace:NextChatGPTForMAUI"
+    android:Application.WindowSoftInputModeAdjust="Resize">
     <Application.Resources>
         <ResourceDictionary>
             <!--  FlyoutMenu明亮模式色彩  -->
@@ -26,7 +28,7 @@
             <Color x:Key="ParaEntryStrokeness">Black</Color>
             <!--  ParameterConfig黑暗模式色彩  -->
             <Color x:Key="ParaMainDarkBackground">#36454f</Color>
-            <Color x:Key="ParaEntryDarkBackground">#26619c</Color>
+            <Color x:Key="ParaEntryDarkBackground">#F6F3F0</Color>
             <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  -->
             <!--  UserChatTemplate色彩  -->
             <Color x:Key="UserChatBoxBackground">#7cfc00</Color>

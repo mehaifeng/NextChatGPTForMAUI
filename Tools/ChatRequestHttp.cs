@@ -14,14 +14,18 @@ namespace NextChatGPTForMAUI.Tools
     {
         private static readonly string apiurl = "https://api.nextapi.fun/v1/chat/completions";
 
-        public static async IAsyncEnumerable<string> ReceiveStreamResponseFromOpenAI(ChatRequest chatRequest,string apikey)
+        public static async IAsyncEnumerable<string> ReceiveStreamResponseFromOpenAI(ChatRequest chatRequest,string api_address,string apikey)
         {
-            using(var client = new HttpClient())
+            api_address ??= "https://api.nextapi.fun/";
+            Uri baseUri = new Uri(api_address);
+            Uri relativeUri = new Uri("v1/chat/completions", UriKind.Relative);
+            Uri combinedUri = new Uri(baseUri, relativeUri);
+            using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + apikey);
                 var requestBody = JsonConvert.SerializeObject(chatRequest);
                 var requestContent = new StringContent(requestBody, Encoding.UTF8,"application/json");
-                HttpResponseMessage response = await client.PostAsync(apiurl, requestContent);
+                HttpResponseMessage response = await client.PostAsync(combinedUri, requestContent);
                 bool isFinish = false;
                 if(response.IsSuccessStatusCode)
                 {

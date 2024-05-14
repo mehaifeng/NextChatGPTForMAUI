@@ -117,17 +117,6 @@ namespace NextChatGPTForMAUI.Viewmodels
             SelectedMask.MaskModels.Remove(o);
             isRemoved = true;
         }
-        [RelayCommand]
-        public async Task SaveMaskAndClosePopup(Popup popup)
-        {
-            List<MaskModel> masks = SelectedMask.MaskModels.ToList();
-            List<MaskType> maskTypeList =MaskTypeList.ToList();
-            var maskJson = JsonConvert.SerializeObject(maskTypeList);
-            await File.WriteAllTextAsync(maskPath, maskJson);
-            WeakReferenceMessenger.Default.Send(WeakReferenceMessenger.Default, "ClearAllPreset");
-            WeakReferenceMessenger.Default.Send(masks, "LoadMaskModels");
-            popup.Close();
-        }
         #endregion
     }
 }

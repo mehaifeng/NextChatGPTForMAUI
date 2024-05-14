@@ -17,6 +17,8 @@ namespace NextChatGPTForMAUI.Models
         [ObservableProperty]
         private string max_tokens;
         [ObservableProperty]
+        private string api_address;
+        [ObservableProperty]
         private string apikey;
     }
 }

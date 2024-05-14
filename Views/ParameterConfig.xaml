@@ -1,279 +1,289 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage 
+<ContentPage
+    x:Class="NextChatGPTForMAUI.Views.ParameterConfig"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewmodel ="clr-namespace:NextChatGPTForMAUI.Viewmodels"
-    x:Class="NextChatGPTForMAUI.Views.ParameterConfig"
+    xmlns:viewmodel="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Name="ConfigParameter"
     Title="参数控制"
-    Shell.NavBarIsVisible="True"
+    x:DataType="viewmodel:ParameterConfigViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource ParaMainLightBackground},
+                                      Dark={StaticResource ParaMainDarkBackground}}"
     Shell.FlyoutBehavior="Flyout"
-    BackgroundColor="{AppThemeBinding Light={StaticResource ParaMainLightBackground},Dark={StaticResource ParaMainDarkBackground}}"
-    x:DataType="viewmodel:ParameterConfigViewModel">
+    Shell.NavBarIsVisible="True">
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="Label">
-                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor},Dark={StaticResource TextDarkColor}}"/>
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLightColor}, Dark={StaticResource TextDarkColor}}" />
             </Style>
             <Style TargetType="Entry">
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource ParaEntryLightBackground}, Dark={StaticResource ParaEntryDarkBackground}}"/>
-                <Setter Property="TextColor" Value="Black"/>
-                <Setter Property="PlaceholderColor" Value="{StaticResource TextLightColor}"/>
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource ParaEntryLightBackground}, Dark={StaticResource ParaEntryDarkBackground}}" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="PlaceholderColor" Value="{StaticResource TextLightColor}" />
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
     <ScrollView>
         <StackLayout>
-            <HorizontalStackLayout
-                HorizontalOptions="CenterAndExpand"
-                Margin="0,10,0,20">
+            <HorizontalStackLayout Margin="0,20,0,10" HorizontalOptions="CenterAndExpand">
                 <Label
                     HorizontalOptions="CenterAndExpand"
-                    Text="API详细信息请参阅"/>
+                    Text="API详细信息请参阅"
+                    VerticalOptions="Center" />
                 <Label
-                    TextColor="Blue"
-                    Text="此文档"
-                    HorizontalOptions="CenterAndExpand">
+                    HorizontalOptions="CenterAndExpand"
+                    Text="OpenAI"
+                    TextColor="#318ce7"
+                    VerticalOptions="Center">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer 
-                            CommandParameter="https://platform.openai.com/docs/api-reference/chat/create"/>
+                        <TapGestureRecognizer Command="{Binding OpenUrlCommand}" CommandParameter="https://platform.openai.com/docs/api-reference/chat/create" />
                     </Label.GestureRecognizers>
                 </Label>
+                <Button
+                    Margin="60,0,0,0"
+                    Background="Green"
+                    Command="{Binding SaveCommand}"
+                    HorizontalOptions="End"
+                    Text="保存"
+                    TextColor="White"
+                    WidthRequest="100" />
             </HorizontalStackLayout>
-            <Grid
-                Padding="10"
-                WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
+
+            <Grid Padding="10" WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                 <VerticalStackLayout>
                     <Grid
-                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
+                        x:Name="LayoutOne"
                         HeightRequest="50"
-                        x:Name="LayoutOne">
+                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout
-                            Grid.Column="0">
-                            <Label 
-                                Text="model"/>
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="model" />
                             <Border
-                                StrokeThickness="0"
+                                BackgroundColor="#dcdcdc"
                                 HorizontalOptions="Start"
+                                StrokeThickness="0"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="5"/>
+                                    <RoundRectangle CornerRadius="5" />
                                 </Border.StrokeShape>
-                                <Entry
-                                    Text="{Binding ParameterModel.Model}"
-                                    HorizontalTextAlignment="Center"
-                                    WidthRequest="100"
-                                    BackgroundColor="#dcdcdc"/>
+                                <Border BackgroundColor="#dcdcdc" StrokeThickness="1">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="5" />
+                                    </Border.StrokeShape>
+                                    <Entry
+                                        HorizontalTextAlignment="Center"
+                                        Text="{Binding ParameterModel.Model}"
+                                        WidthRequest="100" />
+                                </Border>
                             </Border>
                         </VerticalStackLayout>
                         <Label
-                            Margin="10,0,0,0"
                             Grid.Column="1"
-                            VerticalOptions="Start"
-                            Text="【模型】指定要使用的模型的名称。不同的模型有不同的参数量、性能和价格"/>
+                            Margin="10,0,0,0"
+                            Text="【模型】指定要使用的模型的名称。不同的模型有不同的参数量、性能和价格"
+                            VerticalOptions="Start" />
                     </Grid>
                     <Grid
-                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
-                        HeightRequest="80"
+                        x:Name="LayoutTwo"
                         Margin="0,20,0,10"
-                        x:Name="LayoutTwo">
+                        HeightRequest="80"
+                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout
-                            Grid.Column="0">
-                            <Label 
-                                Text="temperature"/>
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="temperature" />
                             <Border
-                                StrokeThickness="0"
+                                BackgroundColor="#dcdcdc"
                                 HorizontalOptions="Start"
+                                StrokeThickness="0"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="5"/>
+                                    <RoundRectangle CornerRadius="5" />
                                 </Border.StrokeShape>
                                 <Entry
+                                    HorizontalTextAlignment="Center"
+                                    Keyboard="Numeric"
+                                    Placeholder="0-1"
                                     Text="{Binding ParameterModel.Temperature}"
-                                    Keyboard="Numeric"
-                                    HorizontalTextAlignment="Center"
-                                    Placeholder="0-1"
-                                    WidthRequest="100"
-                                    BackgroundColor="#dcdcdc"/>
+                                    WidthRequest="100" />
                             </Border>
                         </VerticalStackLayout>
                         <Label
-                            Margin="10,0,0,0"
                             Grid.Column="1"
-                            VerticalOptions="Start"
-                            Text="【温度】控制模型生成文本的随机性。值越高，模型越倾向于生成不确定的、新颖的、多样的文本，越低则倾向于生成确定的、常见的、单一的文本"/>
+                            Margin="10,0,0,0"
+                            Text="【温度】控制模型生成文本的随机性。值越高，模型越倾向于生成不确定的、新颖的、多样的文本，越低则倾向于生成确定的、常见的、单一的文本"
+                            VerticalOptions="Start" />
                     </Grid>
                     <Grid
-                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
-                        HeightRequest="80"
+                        x:Name="LayoutThree"
                         Margin="0,0,0,10"
-                        x:Name="LayoutThree">
+                        HeightRequest="80"
+                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout
-                            Grid.Column="0">
-                            <Label 
-                                Text="top_p"/>
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="top_p" />
                             <Border
-                                StrokeThickness="0"
+                                BackgroundColor="#dcdcdc"
                                 HorizontalOptions="Start"
+                                StrokeThickness="0"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="5"/>
+                                    <RoundRectangle CornerRadius="5" />
                                 </Border.StrokeShape>
                                 <Entry
+                                    HorizontalTextAlignment="Center"
+                                    Keyboard="Numeric"
+                                    Placeholder="0-1"
                                     Text="{Binding ParameterModel.Top_p}"
-                                    Keyboard="Numeric"
-                                    HorizontalTextAlignment="Center"
-                                    Placeholder="0-1"
-                                    WidthRequest="100"
-                                    BackgroundColor="#dcdcdc"/>
+                                    WidthRequest="100" />
                             </Border>
                         </VerticalStackLayout>
                         <Label
-                            Margin="10,0,0,0"
                             Grid.Column="1"
-                            VerticalOptions="Start"
-                            Text="【截断概率】控制模型在生成下一个单词时考虑的候选单词集合的大小。值越高，模型考虑的候选单词越多，生成文本的多样性越高，反之考虑的候选单词越少，生成文本的多样性越低"/>
+                            Margin="10,0,0,0"
+                            Text="【截断概率】控制模型在生成下一个单词时考虑的候选单词集合的大小。值越高，模型考虑的候选单词越多，生成文本的多样性越高，反之考虑的候选单词越少，生成文本的多样性越低"
+                            VerticalOptions="Start" />
                     </Grid>
                     <Grid
-                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
-                        HeightRequest="80"
+                        x:Name="LayoutFour"
                         Margin="0,0,0,10"
-                        x:Name="LayoutFour">
+                        HeightRequest="80"
+                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout
-                            Grid.Column="0">
-                            <Label 
-                                Text="frequency_penalty"/>
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="frequency_penalty" />
                             <Border
-                                StrokeThickness="0"
+                                BackgroundColor="#dcdcdc"
                                 HorizontalOptions="Start"
+                                StrokeThickness="0"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="5"/>
+                                    <RoundRectangle CornerRadius="5" />
                                 </Border.StrokeShape>
                                 <Entry
+                                    HorizontalTextAlignment="Center"
+                                    Keyboard="Numeric"
+                                    Placeholder="-2.0-2.0"
                                     Text="{Binding ParameterModel.Frequency_penalty}"
-                                    Keyboard="Numeric"
-                                    HorizontalTextAlignment="Center"
-                                    Placeholder="-2.0-2.0"
-                                    WidthRequest="100"
-                                    BackgroundColor="#dcdcdc"/>
+                                    WidthRequest="100" />
                             </Border>
                         </VerticalStackLayout>
                         <Label
-                            Margin="10,0,0,0"
                             Grid.Column="1"
-                            VerticalOptions="Start"
-                            Text="【频率惩罚】控制模型在生成文本时避免重复单词或短语的程度。值越高，模型越倾向于生成不重复的文本，反之越倾向于生成重复的文本。"/>
+                            Margin="10,0,0,0"
+                            Text="【频率惩罚】控制模型在生成文本时避免重复单词或短语的程度。值越高，模型越倾向于生成不重复的文本，反之越倾向于生成重复的文本。"
+                            VerticalOptions="Start" />
                     </Grid>
                     <Grid
-                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
-                        HeightRequest="80"
+                        x:Name="LayoutFive"
                         Margin="0,0,0,10"
-                        x:Name="LayoutFive">
+                        HeightRequest="80"
+                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout
-                            Grid.Column="0">
-                            <Label 
-                                Text="presence_penalty"/>
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="presence_penalty" />
                             <Border
-                                StrokeThickness="0"
+                                BackgroundColor="#dcdcdc"
                                 HorizontalOptions="Start"
+                                StrokeThickness="0"
                                 WidthRequest="100">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="5"/>
+                                    <RoundRectangle CornerRadius="5" />
                                 </Border.StrokeShape>
                                 <Entry
-                                    Text="{Binding ParameterModel.Presence_penalty}"
-                                    Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
+                                    Keyboard="Numeric"
                                     Placeholder="-2.0-2.0"
-                                    WidthRequest="100"
-                                    BackgroundColor="#dcdcdc"/>
+                                    Text="{Binding ParameterModel.Presence_penalty}"
+                                    WidthRequest="100" />
                             </Border>
                         </VerticalStackLayout>
                         <Label
-                            Margin="10,0,0,0"
                             Grid.Column="1"
-                            VerticalOptions="Start"
-                            Text="【存在惩罚】控制模型在生成文本时避免使用已经出现过的单词或短语的程度。值越高，模型越倾向于生成不重复的文本，反之模型越倾向于生成重复的文本"/>
+                            Margin="10,0,0,0"
+                            Text="【存在惩罚】控制模型在生成文本时避免使用已经出现过的单词或短语的程度。值越高，模型越倾向于生成不重复的文本，反之模型越倾向于生成重复的文本"
+                            VerticalOptions="Start" />
                     </Grid>
                     <Grid
-                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}"
+                        x:Name="LayoutSix"
                         HeightRequest="60"
-                        x:Name="LayoutSix">
+                        WidthRequest="{Binding Source={x:Reference ConfigParameter}, Path=WidthRequest}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <VerticalStackLayout
-                            Grid.Column="0">
-                            <Label 
-                                Text="max_tokens"/>
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="max_tokens" />
                             <Border
-                                StrokeThickness="0"
+                                BackgroundColor="#dcdcdc"
                                 HorizontalOptions="Start"
-                                WidthRequest="100"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource InputBorderLightBackground},Dark={StaticResource InputBorderDarkBackground}}">
+                                StrokeThickness="0"
+                                WidthRequest="100">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="5"/>
+                                    <RoundRectangle CornerRadius="5" />
                                 </Border.StrokeShape>
                                 <Entry
-                                    Text="{Binding ParameterModel.Max_tokens}"
-                                    Keyboard="Numeric"
                                     HorizontalTextAlignment="Center"
-                                    WidthRequest="100"
-                                    BackgroundColor="#dcdcdc"/>
+                                    Keyboard="Numeric"
+                                    Text="{Binding ParameterModel.Max_tokens}"
+                                    WidthRequest="100" />
                             </Border>
                         </VerticalStackLayout>
                         <Label
-                            Margin="10,0,0,0"
                             Grid.Column="1"
-                            VerticalOptions="Start"
-                            Text="【最大令牌数】指定模型生成文本的最大令牌数。 max_tokens越大，模型生成的文本越长，反之生成的文本越短"/>
+                            Margin="10,0,0,0"
+                            Text="【最大令牌数】指定模型生成文本的最大令牌数。 max_tokens越大，模型生成的文本越长，反之生成的文本越短"
+                            VerticalOptions="Start" />
                     </Grid>
                     <Label
                         Margin="0,40,0,10"
                         HorizontalOptions="Center"
-                        Text="API_Key"/>
+                        Text="接口地址" />
                     <Border
-                        StrokeThickness="0"
+                        BackgroundColor="#dcdcdc"
                         HorizontalOptions="Center"
-                        WidthRequest="400">
+                        StrokeThickness="0"
+                        WidthRequest="320">
                         <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="5"/>
+                            <RoundRectangle CornerRadius="5" />
                         </Border.StrokeShape>
                         <Entry
-                            Text="{Binding ParameterModel.Apikey}"
                             HorizontalTextAlignment="Center"
-                            WidthRequest="400"
-                            BackgroundColor="#dcdcdc"/>
+                            Placeholder="示例： https://api.openai.com/v1"
+                            Text="{Binding ParameterModel.Api_address}"
+                            WidthRequest="400" />
                     </Border>
-                    <Button
-                        Text="保存"
-                        Command="{Binding SaveCommand}"
-                        Background="Green"
-                        TextColor="White"
-                        Margin="0,40,0,0"
-                        WidthRequest="100"/>
+                    <Label
+                        Margin="0,20,0,10"
+                        HorizontalOptions="Center"
+                        Text="API_Key" />
+                    <Border
+                        BackgroundColor="#dcdcdc"
+                        HorizontalOptions="Center"
+                        StrokeThickness="0"
+                        WidthRequest="320">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="5" />
+                        </Border.StrokeShape>
+                        <Entry
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding ParameterModel.Apikey}"
+                            WidthRequest="400" />
+                    </Border>
                 </VerticalStackLayout>
             </Grid>
         </StackLayout>

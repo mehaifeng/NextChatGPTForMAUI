@@ -70,35 +70,56 @@
                             SelectionChangedCommand="{Binding SelectMaskCommand}"
                             SelectionMode="Single"
                             VerticalOptions="Center">
+
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <Border
-                                            Margin="5,10,5,0"
-                                            BackgroundColor="Transparent"
-                                            HeightRequest="40"
-                                            StrokeShape="RoundRectangle 50"
-                                            VerticalOptions="Start"
-                                            WidthRequest="40">
+                                    <Border Margin="2">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Grid>
+                                            <Border
+                                                Margin="5,10,5,0"
+                                                BackgroundColor="Transparent"
+                                                HeightRequest="40"
+                                                StrokeShape="RoundRectangle 50"
+                                                VerticalOptions="Start"
+                                                WidthRequest="40">
+                                                <Label
+                                                    FontSize="28"
+                                                    HorizontalOptions="Center"
+                                                    Text="{Binding MaskFace}"
+                                                    VerticalOptions="Center" />
+                                            </Border>
                                             <Label
-                                                FontSize="28"
+                                                Margin="5,5,5,5"
+                                                FontSize="Small"
                                                 HorizontalOptions="Center"
-                                                Text="{Binding MaskFace}"
-                                                VerticalOptions="Center" />
-                                        </Border>
-                                        <Label
-                                            Margin="5,5,5,5"
-                                            FontSize="Small"
-                                            HorizontalOptions="Center"
-                                            Text="{Binding MaskName}"
-                                            TextColor="{AppThemeBinding Light=Black,
-                                                                        Dark=White}"
-                                            VerticalOptions="End"
-                                            VerticalTextAlignment="Start" />
-                                    </Grid>
+                                                Text="{Binding MaskName}"
+                                                TextColor="{AppThemeBinding Light=Black,
+                                                                            Dark=White}"
+                                                VerticalOptions="End"
+                                                VerticalTextAlignment="Start" />
+
+                                        </Grid>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup Name="CommonStates">
+                                                <VisualState Name="Normal">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="BackgroundColor" Value="Transparent" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState Name="Selected">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="BackgroundColor" Value="#318ce7" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
@@ -204,7 +225,7 @@
                     <ColumnDefinition Width="0.2*" />
                 </Grid.ColumnDefinitions>
                 <Button
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Margin="0,0,10,0"
                     BackgroundColor="#007fff"
                     Command="{Binding AddMaskModelCommand}"
@@ -214,18 +235,6 @@
                     Text="新增"
                     TextColor="White"
                     VerticalOptions="Center"
-                    WidthRequest="60" />
-                <Button
-                    Grid.Column="3"
-                    BackgroundColor="#009000"
-                    Command="{Binding SaveMaskAndClosePopupCommand}"
-                    CommandParameter="{Binding Source={Reference OneMaskPopup}}"
-                    FontAttributes="Bold"
-                    FontSize="Small"
-                    HeightRequest="38"
-                    HorizontalOptions="End"
-                    Text="保存"
-                    TextColor="White"
                     WidthRequest="60" />
             </Grid>
         </Grid>

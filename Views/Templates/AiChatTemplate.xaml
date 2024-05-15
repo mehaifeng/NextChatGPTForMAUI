@@ -21,12 +21,12 @@
             </Grid.RowDefinitions>
             <Entry
                 Grid.Row="0"
-                Margin="0,0,0,5"
                 FontAttributes="Bold"
                 FontSize="22"
                 HorizontalOptions="Start"
-                Placeholder="😐"
-                Text="🤨" />
+                IsReadOnly="True"
+                Placeholder="😊"
+                Text="{Binding AIFace}" />
             <Border
                 x:Name="MessageBox"
                 Grid.Row="1"

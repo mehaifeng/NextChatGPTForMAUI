@@ -96,7 +96,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                 }
             });
             //重载预设
-            WeakReferenceMessenger.Default.Register<List<MaskModel>, string>(this, "LoadMaskModels", (r, m) =>
+            WeakReferenceMessenger.Default.Register<MaskType, string>(this, "LoadMaskModels", (r, m) =>
             {
                 LoadMaskModelInfos(m);
             });
@@ -165,7 +165,7 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// <summary>
         /// 新加载面具预设信息
         /// </summary>
-        private void LoadMaskModelInfos(List<MaskModel> masks)
+        private void LoadMaskModelInfos(MaskType masks)
         {
             int i = 0;
             if (masks==null && File.Exists(maskPath))
@@ -192,7 +192,18 @@ namespace NextChatGPTForMAUI.Viewmodels
             }
             if (masks != null)
             {
-                foreach (var item in masks)
+                foreach(var item in ChatList)
+                {
+                    if (item.IsUser)
+                    {
+                        item.UserFace = masks.UserFace;
+                    }
+                    else
+                    {
+                        item.AIFace = masks.MaskFace;
+                    }
+                }
+                foreach (var item in masks.MaskModels)
                 {
                     chatRequest.messages.Insert(i, new ChatMessage()
                     {
@@ -364,10 +375,10 @@ namespace NextChatGPTForMAUI.Viewmodels
                     chatRequest.messages.Add(new ChatMessage
                     {
                         role = "user",
-                        content = "这是一条作为system的指令：请根据以上内容总结一句简短的标题，50字以内"
+                        content = "这是一条来自system的指令：请根据以上对话内容总结一句简短的标题，50字以内"
                     });
                     string summary = null;
-                    await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Apikey, paraConfig.Apikey))
+                    await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Api_address, paraConfig.Apikey))
                     {
                         summary += text;
                     }

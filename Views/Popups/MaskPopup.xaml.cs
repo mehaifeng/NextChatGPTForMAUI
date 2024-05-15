@@ -19,7 +19,7 @@ public partial class MaskPopup : Popup
 
     private async void OneMaskPopup_Closed(object sender, CommunityToolkit.Maui.Core.PopupClosedEventArgs e)
     {
-        List<MaskModel> masks = _viewmodel.SelectedMask.MaskModels.ToList();
+        MaskType masks = _viewmodel.SelectedMask;
         List<MaskType> maskTypeList = _viewmodel.MaskTypeList.ToList();
         var maskJson = JsonConvert.SerializeObject(maskTypeList);
         await File.WriteAllTextAsync(_viewmodel.maskPath, maskJson);

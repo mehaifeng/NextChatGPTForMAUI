@@ -14,7 +14,6 @@ namespace NextChatGPTForMAUI.Models
     {
         public ChatModel()
         {
-            AsyncRelayCommand ChangeChatFaceCommand = new AsyncRelayCommand(ChangeChatFace);
         }
         private string tag;
         public string Tag
@@ -39,18 +38,18 @@ namespace NextChatGPTForMAUI.Models
             get { return isUser; }
             set { SetProperty(ref isUser, value); }
         }
-        private bool chatFace;
-        public bool ChatFace
+        private string aiFace;
+        public string AIFace
         {
-            get { return chatFace; }
-            set { SetProperty(ref chatFace, value); }
+            get { return aiFace; }
+            set { SetProperty(ref aiFace, value); }
         }
-        public AsyncRelayCommand ChangeChatFaceCommand;
-        private Task ChangeChatFace()
+
+        private string userFace;
+        public string UserFace
         {
-            ChatFacePopup chatFacePopup = new ChatFacePopup();
-            Application.Current.MainPage.ShowPopupAsync(chatFacePopup);
-            return Task.CompletedTask;
+            get { return userFace; }
+            set { SetProperty(ref userFace, value); }
         }
     }
 }

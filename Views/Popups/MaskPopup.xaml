@@ -24,7 +24,7 @@
                 <RowDefinition Height="360" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" HorizontalOptions="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.45*" />
                     <ColumnDefinition Width="0.55*" />
@@ -76,7 +76,7 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="2">
+                                    <Border Margin="2" WidthRequest="65">
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="8" />
                                         </Border.StrokeShape>
@@ -98,11 +98,14 @@
                                                 Margin="5,5,5,5"
                                                 FontSize="Small"
                                                 HorizontalOptions="Center"
+                                                HorizontalTextAlignment="Center"
+                                                MaxLines="1"
                                                 Text="{Binding MaskName}"
                                                 TextColor="{AppThemeBinding Light=Black,
                                                                             Dark=White}"
                                                 VerticalOptions="End"
-                                                VerticalTextAlignment="Start" />
+                                                VerticalTextAlignment="Start"
+                                                WidthRequest="65" />
 
                                         </Grid>
                                         <VisualStateManager.VisualStateGroups>
@@ -188,9 +191,9 @@
                                     Grid.Column="1"
                                     Padding="2"
                                     BackgroundColor="{AppThemeBinding Light=White,
-                                                                      Dark=Gray}"
+                                                                      Dark=#dcdcdc}"
                                     Stroke="{AppThemeBinding Light=Black,
-                                                             Dark=LightGray}"
+                                                             Dark=#dcdcdc}"
                                     StrokeShape="{RoundRectangle CornerRadius=10}"
                                     StrokeThickness="1">
                                     <Editor
@@ -219,14 +222,43 @@
             </Border>
             <Grid Grid.Row="3" Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.1*" />
-                    <ColumnDefinition Width="0.2*" />
-                    <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition Width="0.2*" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" HorizontalOptions="Start">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <HorizontalStackLayout Grid.Column="0">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="AI头像"
+                            VerticalOptions="Center" />
+                        <Entry
+                            FontAttributes="Bold"
+                            FontSize="Large"
+                            Keyboard="Chat"
+                            Placeholder="A"
+                            Text="{Binding SelectedMask.MaskFace}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Column="1">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="用户头像"
+                            VerticalOptions="Center" />
+                        <Entry
+                            FontAttributes="Bold"
+                            FontSize="Large"
+                            Keyboard="Chat"
+                            Placeholder="Q"
+                            Text="{Binding SelectedMask.UserFace}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
                 <Button
-                    Grid.Column="3"
-                    Margin="0,0,10,0"
+                    Grid.Column="1"
                     BackgroundColor="#007fff"
                     Command="{Binding AddMaskModelCommand}"
                     FontAttributes="Bold"

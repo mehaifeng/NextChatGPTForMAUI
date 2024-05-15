@@ -17,7 +17,7 @@ namespace NextChatGPTForMAUI.Models
         private ObservableCollection<MaskModel> maskModels;
 
         /// <summary>
-        /// 面具脸谱
+        /// AI面具脸谱
         /// </summary>
         [ObservableProperty]
         private string maskFace;
@@ -27,6 +27,12 @@ namespace NextChatGPTForMAUI.Models
         /// </summary>
         [ObservableProperty]
         private string maskName;
+
+        /// <summary>
+        /// 用户面具脸谱
+        /// </summary>
+        [ObservableProperty]
+        private string userFace;
 
         /// <summary>
         /// 上一次是否使用过

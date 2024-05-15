@@ -21,6 +21,10 @@ namespace NextChatGPTForMAUI.Models
         /// </summary>
         public ChatRequest History { get; set; }
         /// <summary>
+        /// 历史对话双方头像
+        /// </summary>
+        public List<string> BothAvatars { get; set; }
+        /// <summary>
         /// 历史对话结构
         /// </summary>
         public List<ChatModel> HistoryChatModel { get; set; }

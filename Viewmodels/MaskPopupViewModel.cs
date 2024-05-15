@@ -35,7 +35,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             {
                 MaskTypeList.Add(new MaskType
                 {
-                     MaskModels = new ObservableCollection<MaskModel>(),
+                     MaskModels = [],
                      IsLastUsed = true,
                      MaskFace = "😊",
                      MaskName = "新预设"

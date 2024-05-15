@@ -21,13 +21,13 @@
             </Grid.RowDefinitions>
             <Entry
                 Grid.Row="0"
-                Margin="0,0,0,5"
+                x:DataType="viemodels:MaskPopupViewModel"
                 FontAttributes="Bold"
                 FontSize="22"
                 HorizontalOptions="End"
                 IsReadOnly="True"
-                Placeholder="🙎"
-                Text="🙎" />
+                Placeholder="😋"
+                Text="{Binding UserFace}" />
             <Border
                 x:Name="MessageBox"
                 Grid.Row="1"

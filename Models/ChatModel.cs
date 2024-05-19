@@ -51,5 +51,12 @@ namespace NextChatGPTForMAUI.Models
             get { return userFace; }
             set { SetProperty(ref userFace, value); }
         }
+
+        private bool messageMenuState = false;
+        public bool MessageMenuState
+        {
+            get { return messageMenuState; }
+            set { SetProperty(ref messageMenuState, value); }
+        }
     }
 }

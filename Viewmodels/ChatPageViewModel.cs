@@ -438,6 +438,15 @@ namespace NextChatGPTForMAUI.Viewmodels
             MaskPopup maskPopup = new();
             await o.ShowPopupAsync(maskPopup);
         }
+        /// <summary>
+        /// 显示消息菜单
+        /// </summary>
+        [RelayCommand]
+        public void ShowMessageMenu(View o)
+        {
+            o.IsVisible = true;
+        }
+
         #endregion
 
         #region 属性

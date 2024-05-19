@@ -3,30 +3,84 @@
     x:Class="NextChatGPTForMAUI.Views.Templates.AiChatTemplate"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:NextChatGPTForMAUI.Converters"
     xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Name="AiBox"
     x:DataType="model:ChatModel">
-    <SwipeView
-        SwipeChanging="AiBox_SwipeChanging"
-        SwipeEnded="AiBox_SwipeEnded"
-        Threshold="{Binding Width, Source={x:Reference MessageBox}}">
-        <SwipeView.RightItems Mode="Execute" SwipeBehaviorOnInvoked="Close">
-            <SwipeItem BackgroundColor="Transparent" />
-        </SwipeView.RightItems>
+    <Grid.Resources>
+        <converters:MessageConverter x:Key="MessageConverter" />
+    </Grid.Resources>
+    <SwipeView>
         <Grid Margin="10,10,10,0">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Entry
-                Grid.Row="0"
-                FontAttributes="Bold"
-                FontSize="22"
-                HorizontalOptions="Start"
-                IsReadOnly="True"
-                Placeholder="😊"
-                Text="{Binding AIFace}" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".1*" />
+                    <ColumnDefinition Width=".9*" />
+                </Grid.ColumnDefinitions>
+                <Entry
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    HorizontalOptions="Start"
+                    IsReadOnly="True"
+                    Placeholder="😊"
+                    Text="{Binding AIFace}" />
+                <HorizontalStackLayout
+                    x:Name="MessageMenu"
+                    Grid.Column="1"
+                    HeightRequest="35"
+                    IsVisible="{Binding MessageMenuState}"
+                    Spacing="5">
+                    <Border
+                        BackgroundColor="#0a75ad"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        WidthRequest="50">
+                        <Label
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Text="编辑"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding .}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border
+                        BackgroundColor="#6f4a95"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        WidthRequest="50">
+                        <Label
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Text="复制"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding .}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border
+                        BackgroundColor="#91352f"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        WidthRequest="50">
+                        <Label
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Text="删除"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding .}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+            </Grid>
             <Border
                 x:Name="MessageBox"
                 Grid.Row="1"
@@ -36,13 +90,24 @@
                 HorizontalOptions="Start"
                 StrokeShape="RoundRectangle 10,10,10,10">
                 <Editor
+                    x:Name="AiEditor"
                     AutoSize="TextChanges"
                     HorizontalOptions="Center"
+                    IsReadOnly="True"
                     Text="{Binding Text, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                     TextColor="{AppThemeBinding Light={StaticResource AiChatBoxLightTextColor},
                                                 Dark={StaticResource AiChatBoxDarkTextColor}}"
                     Unfocused="Editor_Unfocused"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center">
+                    <Editor.Behaviors>
+                        <toolkit:TouchBehavior
+                            x:DataType="viemodels:ChatPageViewModel"
+                            BindingContext="{viemodels:ChatPageViewModel}"
+                            LongPressCommand="{Binding ShowMessageMenuCommand}"
+                            LongPressCommandParameter="{x:Reference MessageMenu}"
+                            LongPressDuration="650" />
+                    </Editor.Behaviors>
+                </Editor>
             </Border>
         </Grid>
     </SwipeView>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
-using Autofac;
 using NextChatGPTForMAUI.Viewmodels;
 using NextChatGPTForMAUI.Views;
 using Microsoft.Maui.Handlers;

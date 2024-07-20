@@ -19,16 +19,6 @@
             <Style x:Key="RespondBorderStrokeThickness" TargetType="Border">
                 <Setter Property="StrokeThickness" Value="{AppThemeBinding Light=1, Dark=0}" />
             </Style>
-            <DataTemplate x:Key="UserChatTemplate">
-                <template:UserChatTemplate />
-            </DataTemplate>
-            <DataTemplate x:Key="AiChatTemplate">
-                <template:AiChatTemplate />
-            </DataTemplate>
-            <template:ChatTemplateSelector
-                x:Key="ChatTemplateSelector"
-                AiChatTemplate="{StaticResource AiChatTemplate}"
-                UserChatTemplate="{StaticResource UserChatTemplate}" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid Padding="5">
@@ -48,8 +38,8 @@
             </Border.StrokeShape>
             <!--  以下是聊天生成内容  -->
             <CollectionView
+                x:Name="ChatCollectionView"
                 Margin="0,0,0,8"
-                ItemTemplate="{StaticResource ChatTemplateSelector}"
                 ItemsSource="{Binding ChatList}"
                 ItemsUpdatingScrollMode="KeepLastItemInView" />
         </Border>
@@ -65,6 +55,7 @@
                 Grid.Column="0"
                 BackgroundColor="#d2691e"
                 Command="{Binding ClearAndSaveCommand}"
+                CommandParameter="{x:Reference ThisChat}"
                 FontFamily="iconfont"
                 FontSize="20"
                 Text="&#xeb86;"
@@ -108,12 +99,19 @@
                 Grid.Column="3"
                 BackgroundColor="#009000"
                 Command="{Binding SendCommand}"
-                CommandParameter="{x:Reference InputBorder}"
                 FontAttributes="Bold"
                 HeightRequest="{Binding Height, Source={x:Reference MaskBtn}}"
                 Text="发送"
                 TextColor="White"
-                VerticalOptions="Center" />
+                VerticalOptions="Center">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{x:StaticResource ControlsConverter}">
+                        <Binding Source="{x:Reference ThisChat}" />
+                        <Binding Source="{x:Reference InputBorder}" />
+                        <Binding Source="{x:Reference ChatCollectionView}" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
         </Grid>
     </Grid>
 </ContentPage>

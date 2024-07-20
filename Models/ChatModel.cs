@@ -1,62 +1,78 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Core.Platform;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NextChatGPTForMAUI.Viewmodels;
 using NextChatGPTForMAUI.Views.Popups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace NextChatGPTForMAUI.Models
 {
     public partial class ChatModel:ObservableObject
     {
-        public ChatModel()
-        {
-        }
+        [ObservableProperty]
         private string tag;
-        public string Tag
-        {
-            get { return tag; }
-            set { SetProperty(ref tag, value); }
-        }
-
+        [ObservableProperty]
         private string text;
-        public string Text
-        {
-            get { return text; } 
-            set
-            {
-                SetProperty(ref text, value);
-            }
-        }
-
+        [ObservableProperty]
         private bool isUser;
-        public bool IsUser
-        {
-            get { return isUser; }
-            set { SetProperty(ref isUser, value); }
-        }
+        [ObservableProperty]
         private string aiFace;
-        public string AIFace
-        {
-            get { return aiFace; }
-            set { SetProperty(ref aiFace, value); }
-        }
-
+        [ObservableProperty]
         private string userFace;
-        public string UserFace
-        {
-            get { return userFace; }
-            set { SetProperty(ref userFace, value); }
-        }
-
+        [ObservableProperty]
+        private bool isReadOnly = true;
+        [ObservableProperty]
         private bool messageMenuState = false;
-        public bool MessageMenuState
+
+        /// <summary>
+        /// 显示菜单
+        /// </summary>
+        [RelayCommand]
+        public void ShowChatMenu(HorizontalStackLayout o)
         {
-            get { return messageMenuState; }
-            set { SetProperty(ref messageMenuState, value); }
+            o.Focus();
+            MessageMenuState = true;
+        }
+        /// <summary>
+        /// 关闭显示菜单
+        /// </summary>
+        [RelayCommand]
+        public void CloseMessageMenu()
+        {
+            MessageMenuState = false;
+        }
+        /// <summary>
+        /// 复制消息
+        /// </summary>
+        [RelayCommand]
+        public void CopyMessage()
+        {
+            Clipboard.Default.SetTextAsync(Text);
+        }
+        /// <summary>
+        /// 编辑消息
+        /// </summary>
+        [RelayCommand]
+        public void EditMessage(Editor o)
+        {
+            IsReadOnly = false;
+            o.Focus();
+            o.ShowKeyboardAsync();
+        }
+        /// <summary>
+        /// 删除消息
+        /// </summary>
+        [RelayCommand]
+        public void DeleteMessage()
+        {
+            var deleteItem = ChatPageViewModel.GetInstance().ChatList.First(t => t == this);
+            ChatPageViewModel.GetInstance().ChatList.Remove(deleteItem);
         }
     }
 }

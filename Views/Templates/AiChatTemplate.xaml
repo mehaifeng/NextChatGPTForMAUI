@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <Grid
     x:Class="NextChatGPTForMAUI.Views.Templates.AiChatTemplate"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -8,7 +7,8 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Name="AiBox"
-    x:DataType="model:ChatModel">
+    x:DataType="model:ChatModel"
+    BindingContext="{viemodels:ChatPageViewModel}">
     <Grid.Resources>
         <converters:MessageConverter x:Key="MessageConverter" />
     </Grid.Resources>
@@ -30,13 +30,16 @@
                     HorizontalOptions="Start"
                     IsReadOnly="True"
                     Placeholder="😊"
-                    Text="{Binding AIFace}" />
+                    Text="{Binding AiFace}" />
                 <HorizontalStackLayout
                     x:Name="MessageMenu"
                     Grid.Column="1"
                     HeightRequest="35"
                     IsVisible="{Binding MessageMenuState}"
                     Spacing="5">
+                    <HorizontalStackLayout.Behaviors>
+                        <toolkit:EventToCommandBehavior Command="{Binding CloseMessageMenuCommand}" EventName="Unfocused" />
+                    </HorizontalStackLayout.Behaviors>
                     <Border
                         BackgroundColor="#0a75ad"
                         StrokeShape="RoundRectangle 10,10,10,10"
@@ -48,10 +51,11 @@
                             TextColor="White"
                             VerticalOptions="Center" />
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding .}" CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer Command="{Binding EditMessageCommand}" CommandParameter="{x:Reference AiEditor}" />
                         </Border.GestureRecognizers>
                     </Border>
                     <Border
+                        x:DataType="viemodels:ChatPageViewModel"
                         BackgroundColor="#6f4a95"
                         StrokeShape="RoundRectangle 10,10,10,10"
                         WidthRequest="50">
@@ -62,7 +66,7 @@
                             TextColor="White"
                             VerticalOptions="Center" />
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding .}" CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer Command="{Binding CopyMessageCommand}" />
                         </Border.GestureRecognizers>
                     </Border>
                     <Border
@@ -76,7 +80,7 @@
                             TextColor="White"
                             VerticalOptions="Center" />
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding .}" CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer Command="{Binding DeleteMessageCommand}" />
                         </Border.GestureRecognizers>
                     </Border>
                 </HorizontalStackLayout>
@@ -93,7 +97,7 @@
                     x:Name="AiEditor"
                     AutoSize="TextChanges"
                     HorizontalOptions="Center"
-                    IsReadOnly="True"
+                    IsReadOnly="{Binding IsReadOnly}"
                     Text="{Binding Text, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                     TextColor="{AppThemeBinding Light={StaticResource AiChatBoxLightTextColor},
                                                 Dark={StaticResource AiChatBoxDarkTextColor}}"
@@ -101,9 +105,8 @@
                     VerticalOptions="Center">
                     <Editor.Behaviors>
                         <toolkit:TouchBehavior
-                            x:DataType="viemodels:ChatPageViewModel"
-                            BindingContext="{viemodels:ChatPageViewModel}"
-                            LongPressCommand="{Binding ShowMessageMenuCommand}"
+                            x:Name="showMenu"
+                            LongPressCommand="{Binding ShowChatMenuCommand}"
                             LongPressCommandParameter="{x:Reference MessageMenu}"
                             LongPressDuration="650" />
                     </Editor.Behaviors>

@@ -17,11 +17,22 @@ using NextChatGPTForMAUI.Views.Popups;
 using CommunityToolkit.Maui.Views;
 using Newtonsoft.Json;
 using NextChatGPTForMAUI.Tools;
+using NextChatGPTForMAUI.Views.Templates;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
     public partial class ChatPageViewModel:ChatRequestHttp
     {
+        private static ChatPageViewModel Instance;
+        public static ChatPageViewModel GetInstance()
+        {
+            if (Instance == null)
+            {
+                Instance = new ChatPageViewModel();
+            }
+            return Instance;
+        }
+
         #region 本地私有属性
         private readonly string path = $"{FileSystem.Current.AppDataDirectory}/parameter.json";
         private readonly string savePath = $"{FileSystem.Current.AppDataDirectory}/saveFile.json";
@@ -161,7 +172,6 @@ namespace NextChatGPTForMAUI.Viewmodels
                 stream = true
             };
         }
-
         /// <summary>
         /// 新加载面具预设信息
         /// </summary>
@@ -200,7 +210,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                     }
                     else
                     {
-                        item.AIFace = masks.MaskFace;
+                        item.AiFace = masks.MaskFace;
                     }
                 }
                 foreach (var item in masks.MaskModels)
@@ -215,11 +225,10 @@ namespace NextChatGPTForMAUI.Viewmodels
                 }
             }
         }
-
         /// <summary>
         /// 显示回复
         /// </summary>
-        private async void WillShowResultFromAPI(Border o)
+        private async void WillShowResultFromAPI(ContentPage page, Border o, CollectionView chatView)
         {
             bool isCorrect = true;
             bool isDeleteThinking = false;
@@ -307,8 +316,11 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// 发送
         /// </summary>
         [RelayCommand]
-        public async Task Send(Border o)
+        public async Task Send(object[] controls)
         {
+            ContentPage page = controls[0] as ContentPage;
+            Border o = controls[1] as Border;
+            CollectionView chatView = controls[2] as CollectionView;
             //如果用户没有输入文本，则不发送
             if(string.IsNullOrEmpty(UserText))
             {
@@ -350,7 +362,7 @@ namespace NextChatGPTForMAUI.Viewmodels
             });
             //用户发送后，清空输入框
             UserText = string.Empty;
-            WillShowResultFromAPI(o);
+            WillShowResultFromAPI(page, o, chatView);
         }
         /// <summary>
         /// 清空/保存
@@ -442,9 +454,51 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// 显示消息菜单
         /// </summary>
         [RelayCommand]
-        public void ShowMessageMenu(View o)
+        public void ShowMessageMenu(Grid o)
         {
-            o.IsVisible = true;
+            ChatModel temp = o.BindingContext as ChatModel;
+            temp.MessageMenuState = true;
+        }
+        /// <summary>
+        /// 关闭消息菜单
+        /// </summary>
+        /// <param name="o"></param>
+        [RelayCommand]
+        public void CloseMessageMenu(Grid o)
+        {
+            ChatModel temp = o.BindingContext as ChatModel;
+            temp.MessageMenuState = false;
+        }
+        /// <summary>
+        /// 编辑消息
+        /// </summary>
+        /// <param name="o"></param>
+        [RelayCommand]
+        public void EditorMessage(Grid o)
+        {
+            ChatModel temp = o.BindingContext as ChatModel;
+            ChatList.First(t => t == temp).IsReadOnly = true;
+            ChatList.First(t => t == temp).MessageMenuState = false;
+        }
+        /// <summary>
+        /// 复制消息到剪切板
+        /// </summary>
+        /// <param name="o"></param>
+        [RelayCommand]
+        public void CopyMessage(Grid o)
+        {
+            ChatModel temp = o.BindingContext as ChatModel;
+            Clipboard.Default.SetTextAsync(temp.Text);
+        }
+        /// <summary>
+        /// 删除消息
+        /// </summary>
+        /// <param name="o"></param>
+        [RelayCommand]
+        public void DeleteMessage(Grid o)
+        {
+            ChatModel temp = o.BindingContext as ChatModel;
+            ChatList.Remove(temp);
         }
 
         #endregion

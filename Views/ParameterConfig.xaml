@@ -8,9 +8,7 @@
     Title="参数控制"
     x:DataType="viewmodel:ParameterConfigViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource ParaMainLightBackground},
-                                      Dark={StaticResource ParaMainDarkBackground}}"
-    Shell.FlyoutBehavior="Flyout"
-    Shell.NavBarIsVisible="True">
+                                      Dark={StaticResource ParaMainDarkBackground}}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="Label">

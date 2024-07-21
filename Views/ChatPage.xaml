@@ -11,7 +11,7 @@
     x:DataType="viewmodel:ChatPageViewModel"
     BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=MainLightBackground},
                                       Dark={x:StaticResource Key=MainDarkBackground}}"
-    Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="True">
     <ContentPage.Resources>
         <ResourceDictionary>

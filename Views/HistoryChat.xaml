@@ -6,8 +6,6 @@
     x:Class="NextChatGPTForMAUI.Views.HistoryChat"
     Title="历史对话"
     BackgroundColor="{AppThemeBinding Light={x:StaticResource ChatBorderLightBackground},Dark={x:StaticResource Key=ChatBordeDarkBackground}}"
-    Shell.NavBarIsVisible="True"
-    Shell.FlyoutBehavior="Flyout"
     x:DataType="viewmodel:HistoryChatViewModel"
     x:Name="HistoryPage"
     Padding="8">

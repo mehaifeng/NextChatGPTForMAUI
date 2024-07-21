@@ -4,59 +4,57 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:view="clr-namespace:NextChatGPTForMAUI.Views"
+    FlyoutBackground="{AppThemeBinding Light={StaticResource FlyoutMenuLightBackground},
+                                       Dark={StaticResource FlyoutMenuDarkBackground}}"
     FlyoutWidth="230"
-    FlyoutBackground="{AppThemeBinding Light={StaticResource FlyoutMenuLightBackground},Dark={StaticResource FlyoutMenuDarkBackground}}">
+    Shell.FlyoutBehavior="Disabled">
     <Shell.ItemTemplate>
         <DataTemplate>
             <Border
                 Padding="20"
-                StrokeThickness="0"
-                Background="Transparent">
+                Background="Transparent"
+                StrokeThickness="0">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
+                    <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <Grid
-                    Padding="10,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.5*" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                <Grid Padding="0,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <Label
-                        Grid.Column="0"
-                        HorizontalOptions="Start"
-                        FontSize="24"
+                        Grid.Row="0"
                         FontFamily="iconfont"
+                        FontSize="24"
+                        HorizontalOptions="Start"
                         Text="{Binding Icon}"
-                        TextColor="{AppThemeBinding Light={StaticResource FlyoutMenuLightText},Dark={StaticResource FlyoutMenuDarkText}}"/>
-                    <Label 
-                        Grid.Column="1"
-                        VerticalOptions="CenterAndExpand"
+                        TextColor="{AppThemeBinding Light={StaticResource FlyoutMenuLightText},
+                                                    Dark={StaticResource FlyoutMenuDarkText}}" />
+                    <Label
+                        Grid.Row="1"
                         HorizontalTextAlignment="Start"
                         Text="{Binding Title}"
-                        TextColor="{AppThemeBinding Light={StaticResource FlyoutMenuLightText},Dark={StaticResource FlyoutMenuDarkText}}"/>
+                        TextColor="{AppThemeBinding Light={StaticResource FlyoutMenuLightText},
+                                                    Dark={StaticResource FlyoutMenuDarkText}}"
+                        VerticalOptions="CenterAndExpand" />
                 </Grid>
             </Border>
         </DataTemplate>
     </Shell.ItemTemplate>
-    <FlyoutItem
-        Title="对话"
-        Icon="&#xe8e8;">
-        <ShellContent ContentTemplate="{DataTemplate view:ChatPage}" Route="ChatPage"/>
-    </FlyoutItem>
-    <FlyoutItem
-        Title="历史对话"
-        Icon="&#xe640;">
-        <ShellContent ContentTemplate="{DataTemplate view:HistoryChat}"/>
-    </FlyoutItem>
-    <FlyoutItem
-        Title="参数控制"
-        Icon="&#xe625;">
-        <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}" Route="ParameterPage"/>
-    </FlyoutItem>
-    <FlyoutItem
-        Title="关于"
-        Icon="&#xe7a6;">
-        <ShellContent ContentTemplate="{DataTemplate view:AboutView}"/>
-    </FlyoutItem>
-
+    <TabBar>
+        <ShellContent
+            Title="对话"
+            ContentTemplate="{DataTemplate view:ChatPage}"
+            Icon="chat.png"
+            Route="ChatPage" />
+        <Tab Title="历史对话" Icon="history.png">
+            <ShellContent ContentTemplate="{DataTemplate view:HistoryChat}" />
+        </Tab>
+        <Tab Title="参数控制" Icon="config.png">
+            <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}" Route="ParameterPage" />
+        </Tab>
+        <Tab Title="关于" Icon="about.png">
+            <ShellContent ContentTemplate="{DataTemplate view:AboutView}" />
+        </Tab>
+    </TabBar>
 </Shell>

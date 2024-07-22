@@ -7,7 +7,9 @@
     FlyoutBackground="{AppThemeBinding Light={StaticResource FlyoutMenuLightBackground},
                                        Dark={StaticResource FlyoutMenuDarkBackground}}"
     FlyoutWidth="230"
-    Shell.FlyoutBehavior="Disabled">
+    Shell.FlyoutBehavior="Flyout"
+    Shell.NavBarIsVisible="True">
+
     <Shell.ItemTemplate>
         <DataTemplate>
             <Border
@@ -17,13 +19,13 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <Grid Padding="0,0,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+                <Grid Padding="10,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <Label
-                        Grid.Row="0"
+                        Grid.Column="0"
                         FontFamily="iconfont"
                         FontSize="24"
                         HorizontalOptions="Start"
@@ -31,7 +33,7 @@
                         TextColor="{AppThemeBinding Light={StaticResource FlyoutMenuLightText},
                                                     Dark={StaticResource FlyoutMenuDarkText}}" />
                     <Label
-                        Grid.Row="1"
+                        Grid.Column="1"
                         HorizontalTextAlignment="Start"
                         Text="{Binding Title}"
                         TextColor="{AppThemeBinding Light={StaticResource FlyoutMenuLightText},
@@ -41,20 +43,17 @@
             </Border>
         </DataTemplate>
     </Shell.ItemTemplate>
-    <TabBar>
-        <ShellContent
-            Title="对话"
-            ContentTemplate="{DataTemplate view:ChatPage}"
-            Icon="chat.png"
-            Route="ChatPage" />
-        <Tab Title="历史对话" Icon="history.png">
-            <ShellContent ContentTemplate="{DataTemplate view:HistoryChat}" />
-        </Tab>
-        <Tab Title="参数控制" Icon="config.png">
-            <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}" Route="ParameterPage" />
-        </Tab>
-        <Tab Title="关于" Icon="about.png">
-            <ShellContent ContentTemplate="{DataTemplate view:AboutView}" />
-        </Tab>
-    </TabBar>
+    <FlyoutItem Title="对话" Icon="&#xe8e8;">
+        <ShellContent ContentTemplate="{DataTemplate view:ChatPage}" Route="ChatPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="历史对话" Icon="&#xe640;">
+        <ShellContent ContentTemplate="{DataTemplate view:HistoryChat}" />
+    </FlyoutItem>
+    <FlyoutItem Title="参数控制" Icon="&#xe625;">
+        <ShellContent ContentTemplate="{DataTemplate view:ParameterConfig}" Route="ParameterPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="关于" Icon="&#xe7a6;">
+        <ShellContent ContentTemplate="{DataTemplate view:AboutView}" />
+    </FlyoutItem>
+
 </Shell>

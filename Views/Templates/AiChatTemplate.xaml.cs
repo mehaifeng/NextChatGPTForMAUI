@@ -7,12 +7,10 @@ namespace NextChatGPTForMAUI.Views.Templates;
 
 public partial class AiChatTemplate : Grid
 {
-    private ChatPageViewModel _chatPageViewModel { get; set; }
     public AiChatTemplate(ChatPageViewModel chatPageViewModel)
 	{
 		InitializeComponent();
         BindingContext = chatPageViewModel;
-        _chatPageViewModel = chatPageViewModel;
     }
 
     double movement { get; set; }

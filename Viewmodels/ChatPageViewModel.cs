@@ -236,7 +236,9 @@ namespace NextChatGPTForMAUI.Viewmodels
             ChatModel AiRespondModel = new()
             {
                 Text = "Thinking...",
-                IsUser = false
+                IsUser = false,
+                MessageMenuState = false,
+                IsReadOnly = true
             };
             ChatList.Add(AiRespondModel);
             Thread thread = new(async () =>
@@ -250,6 +252,7 @@ namespace NextChatGPTForMAUI.Viewmodels
                             AiRespondModel.Text = string.Empty;
                             isDeleteThinking = true;
                         }
+                        System.Threading.Thread.Sleep(20);
                         AiRespondModel.Text += text;
                     }
                     taskCompletionSource.SetResult();
@@ -352,7 +355,9 @@ namespace NextChatGPTForMAUI.Viewmodels
             ChatList.Add(new ChatModel
             {
                 IsUser = true,
-                Text = UserText
+                Text = UserText,
+                MessageMenuState = false,
+                IsReadOnly = true
             }) ;
             //将发送的内容添加到请求队列
             chatRequest.messages.Add(new ChatMessage

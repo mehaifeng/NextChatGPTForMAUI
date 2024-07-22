@@ -10,9 +10,7 @@
     Title="对话"
     x:DataType="viewmodel:ChatPageViewModel"
     BackgroundColor="{AppThemeBinding Light={x:StaticResource Key=MainLightBackground},
-                                      Dark={x:StaticResource Key=MainDarkBackground}}"
-    Shell.FlyoutBehavior="Disabled"
-    Shell.NavBarIsVisible="True">
+                                      Dark={x:StaticResource Key=MainDarkBackground}}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ControlsConverter x:Key="ControlsConverter" />
@@ -21,6 +19,9 @@
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
+    <NavigationPage.TitleView>
+        <Slider HeightRequest="44" WidthRequest="300" />
+    </NavigationPage.TitleView>
     <Grid Padding="5">
         <Grid.RowDefinitions>
             <RowDefinition />

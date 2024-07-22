@@ -26,9 +26,9 @@ namespace NextChatGPTForMAUI.Models
         [ObservableProperty]
         private string userFace;
         [ObservableProperty]
-        private bool isReadOnly = true;
+        private bool isReadOnly;
         [ObservableProperty]
-        private bool messageMenuState = false;
+        private bool messageMenuState;
 
         /// <summary>
         /// 显示菜单
@@ -36,8 +36,14 @@ namespace NextChatGPTForMAUI.Models
         [RelayCommand]
         public void ShowChatMenu(HorizontalStackLayout o)
         {
-            o.Focus();
             MessageMenuState = true;
+            foreach (var item in ChatPageViewModel.GetInstance().ChatList)
+            {
+                if(item != this)
+                {
+                    item.MessageMenuState = false;
+                }
+            }
         }
         /// <summary>
         /// 关闭显示菜单
@@ -54,6 +60,7 @@ namespace NextChatGPTForMAUI.Models
         public void CopyMessage()
         {
             Clipboard.Default.SetTextAsync(Text);
+            MessageMenuState = false;
         }
         /// <summary>
         /// 编辑消息
@@ -62,8 +69,8 @@ namespace NextChatGPTForMAUI.Models
         public void EditMessage(Editor o)
         {
             IsReadOnly = false;
-            o.Focus();
             o.ShowKeyboardAsync();
+            MessageMenuState = false;
         }
         /// <summary>
         /// 删除消息

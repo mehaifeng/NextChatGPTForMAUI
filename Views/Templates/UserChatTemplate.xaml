@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:model="clr-namespace:NextChatGPTForMAUI.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viemodels="clr-namespace:NextChatGPTForMAUI.Viewmodels"
     x:Name="UserBox"
     x:DataType="model:ChatModel">
@@ -19,15 +20,75 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Entry
-                Grid.Row="0"
-                x:DataType="viemodels:MaskPopupViewModel"
-                FontAttributes="Bold"
-                FontSize="22"
-                HorizontalOptions="End"
-                IsReadOnly="True"
-                Placeholder="😋"
-                Text="{Binding UserFace}" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".9*" />
+                    <ColumnDefinition Width=".1*" />
+                </Grid.ColumnDefinitions>
+                <Entry
+                    Grid.Column="1"
+                    x:DataType="viemodels:MaskPopupViewModel"
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    HorizontalOptions="End"
+                    IsReadOnly="True"
+                    Placeholder="😋"
+                    Text="{Binding UserFace}" />
+                <HorizontalStackLayout
+                    x:Name="MessageMenu"
+                    Grid.Column="0"
+                    HeightRequest="35"
+                    HorizontalOptions="End"
+                    IsVisible="{Binding MessageMenuState, Mode=TwoWay}"
+                    Spacing="5">
+                    <HorizontalStackLayout.Behaviors>
+                        <toolkit:EventToCommandBehavior Command="{Binding CloseMessageMenuCommand}" EventName="Unfocused" />
+                    </HorizontalStackLayout.Behaviors>
+                    <Border
+                        BackgroundColor="#0a75ad"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        WidthRequest="50">
+                        <Label
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Text="编辑"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditMessageCommand}" CommandParameter="{x:Reference AiEditor}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border
+                        x:DataType="viemodels:ChatPageViewModel"
+                        BackgroundColor="#6f4a95"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        WidthRequest="50">
+                        <Label
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Text="复制"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CopyMessageCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border
+                        BackgroundColor="#91352f"
+                        StrokeShape="RoundRectangle 10,10,10,10"
+                        WidthRequest="50">
+                        <Label
+                            FontSize="Small"
+                            HorizontalOptions="Center"
+                            Text="删除"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DeleteMessageCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+            </Grid>
             <Border
                 x:Name="MessageBox"
                 Grid.Row="1"
@@ -36,12 +97,22 @@
                 HorizontalOptions="End"
                 StrokeShape="RoundRectangle 10,10,10,10">
                 <Editor
+                    x:Name="UserEditor"
                     AutoSize="TextChanges"
                     HorizontalOptions="Center"
+                    IsReadOnly="{Binding IsReadOnly}"
                     Text="{Binding Text, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                     TextColor="{StaticResource UserChatBoxTextColor}"
                     Unfocused="Editor_Unfocused"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center">
+                    <Editor.Behaviors>
+                        <toolkit:TouchBehavior
+                            x:Name="showMenu"
+                            LongPressCommand="{Binding ShowChatMenuCommand}"
+                            LongPressCommandParameter="{x:Reference MessageMenu}"
+                            LongPressDuration="650" />
+                    </Editor.Behaviors>
+                </Editor>
             </Border>
         </Grid>
     </SwipeView>

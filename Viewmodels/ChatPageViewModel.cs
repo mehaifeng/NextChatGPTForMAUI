@@ -18,6 +18,8 @@ using CommunityToolkit.Maui.Views;
 using Newtonsoft.Json;
 using NextChatGPTForMAUI.Tools;
 using NextChatGPTForMAUI.Views.Templates;
+using Microsoft.Maui.Controls.Platform;
+using System.Diagnostics;
 
 namespace NextChatGPTForMAUI.Viewmodels
 {
@@ -373,75 +375,95 @@ namespace NextChatGPTForMAUI.Viewmodels
         /// 清空/保存
         /// </summary>
         [RelayCommand]
-        public async Task ClearAndSave()
+        public async Task ClearAndSave(ContentPage o)
         {
-            if (taskCompletionSource == null)
+            string action = await o.DisplayActionSheet("清除消息", "取消", null, "保存并清除", "只清除");
+            if (action == "取消") { return; }
+            else if (action == "只清除" || taskCompletionSource == null)
             {
                 oldChatTimeId = string.Empty;
-                ChatList.Clear();
-                chatRequest.messages.Clear();
-            }
-            if (ChatList.Count > 0 && taskCompletionSource.Task.IsCompleted)
-            {
-                if (historyChatRequestsList.Count == 0)
+                if (ChatList.Count > 0)
                 {
-                    oldChatTimeId = string.Empty;
-                }
-                if(string.IsNullOrEmpty(oldChatTimeId))
-                {
-                    chatRequest.messages.Add(new ChatMessage
+                    foreach (var chat in ChatList)
                     {
-                        role = "user",
-                        content = "这是一条来自system的指令：请根据以上对话内容总结一句简短的标题，50字以内"
-                    });
-                    string summary = null;
-                    await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Api_address, paraConfig.Apikey))
-                    {
-                        summary += text;
+                        chat.MessageMenuState = false;
+                        chat.IsReadOnly = true;
                     }
-                    chatRequest.messages.Remove(chatRequest.messages.Last());
-                    historyChatRequestsList.Add(new HistoryChatRequest
-                    {
-                        TimeId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                        HistoryTitle = summary.ToString(),
-                        History = chatRequest,
-                        HistoryChatModel = ChatList.ToList()
-                    }) ;
+                    ChatList.Clear();
+                    ChatList = new ObservableCollection<ChatModel>([]);
+                    chatRequest.messages.Clear();
                 }
-                else if(historyChatRequestsList.Any(t=>t.TimeId==oldChatTimeId))
+            }
+            else if (action == "保存并清除")
+            {
+                if (ChatList.Count > 0 && taskCompletionSource.Task.IsCompleted)
                 {
-                    if(historyChatRequestsList.First(t => t.TimeId == oldChatTimeId).HistoryChatModel.Count != ChatList.Count)
+                    if (historyChatRequestsList.Count == 0)
+                    {
+                        oldChatTimeId = string.Empty;
+                    }
+                    if (string.IsNullOrEmpty(oldChatTimeId))
                     {
                         chatRequest.messages.Add(new ChatMessage
                         {
                             role = "user",
-                            content = "这是一条作为system的指令：请根据以上内容总结一句简短的标题，50字以内"
+                            content = "这是一条来自system的指令：请根据以上对话内容总结一句简短的标题，50字以内"
                         });
                         string summary = null;
-                        await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest,paraConfig.Apikey, paraConfig.Apikey))
+                        await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Api_address, paraConfig.Apikey))
                         {
                             summary += text;
                         }
                         chatRequest.messages.Remove(chatRequest.messages.Last());
-                        foreach (var item in historyChatRequestsList)
+                        foreach (var eachChat in ChatList)
                         {
-                            if (item.TimeId == oldChatTimeId)
+                            eachChat.MessageMenuState = false;
+                            eachChat.IsReadOnly = true;
+                        }
+                        historyChatRequestsList.Add(new HistoryChatRequest
+                        {
+                            TimeId = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                            HistoryTitle = summary.ToString(),
+                            History = chatRequest,
+                            HistoryChatModel = ChatList.ToList()
+                        });
+                    }
+                    else if (historyChatRequestsList.Any(t => t.TimeId == oldChatTimeId))
+                    {
+                        if (historyChatRequestsList.First(t => t.TimeId == oldChatTimeId).HistoryChatModel.Count != ChatList.Count)
+                        {
+                            chatRequest.messages.Add(new ChatMessage
                             {
-                                item.History = chatRequest;
-                                item.HistoryChatModel = new List<ChatModel>(ChatList.ToList());
-                                item.HistoryTitle = summary.ToString();
+                                role = "user",
+                                content = "这是一条作为system的指令：请根据以上内容总结一句简短的标题，50字以内"
+                            });
+                            string summary = null;
+                            await foreach (string text in ReceiveStreamResponseFromOpenAI(chatRequest, paraConfig.Api_address, paraConfig.Apikey))
+                            {
+                                summary += text;
+                            }
+                            chatRequest.messages.Remove(chatRequest.messages.Last());
+                            foreach (var item in historyChatRequestsList)
+                            {
+                                if (item.TimeId == oldChatTimeId)
+                                {
+                                    item.History = chatRequest;
+                                    item.HistoryChatModel = new List<ChatModel>(ChatList.ToList());
+                                    item.HistoryTitle = summary.ToString();
+                                }
                             }
                         }
                     }
+                    string json = JsonConvert.SerializeObject(historyChatRequestsList);
+                    File.WriteAllText(path: savePath, json);
+                    //保存后清空界面和内存,重置唯一索引时间id
+                    oldChatTimeId = string.Empty;
+                    ChatList = new ObservableCollection<ChatModel>([]);
+                    //ChatList.Clear();
+                    LoadChatApiPara();
+                    LoadMaskModelInfos(null);
+                    WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
                 }
-                string json = JsonConvert.SerializeObject(historyChatRequestsList);
-                File.WriteAllText(path: savePath, json);
-                //保存后清空界面和内存,重置唯一索引时间id
-                oldChatTimeId = string.Empty;
-                ChatList.Clear();
-                LoadChatApiPara();
-                LoadMaskModelInfos(null);
-                WeakReferenceMessenger.Default.Send("", "ReloadHistoryList");
             }
         }
         /// <summary>
